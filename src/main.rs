@@ -184,7 +184,7 @@ fn command_create(studis_csv_filepath: &PathBuf, response_json_filepath: &PathBu
     output_fdata = output_fdata.replace(C_OUTPUT_LATEX_REPLACE_KEY, &(output_parts.join("\n\n")));
     let root = env::current_dir().unwrap();
     std::env::set_current_dir(tex_template_filepath.parent().unwrap()).unwrap();
-    let pdfdata = tec::latex_to_pdf(output_fdata).unwrap();
+    let pdfdata = tec::latex_to_pdf(output_fdata).unwrap_or_else(|e| panic!("{} ({})", e.kind(), e.description()));
     std::env::set_current_dir(root).unwrap();
 
     file = File::create(format!("{}.pdf", tex_template_filepath.display())).expect("could not create final PDF");
