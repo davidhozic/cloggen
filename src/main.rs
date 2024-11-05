@@ -1,3 +1,47 @@
+//! # CLOGGEN
+//! Generator študentskih mnenj (za habilitacijo).
+//! 
+//! ## Namestitev pisave (font)
+//! Generiran dokument uporablja pisavo *Roboto*. V primeru, da pisava na sistemu ni nameščena, se dokument ne bo generiral.
+//! Za namestitev uporabi datoteke v mapi ``data/fonts/Roboto``. Namesti vse datoteke.
+//! 
+//! ## Uporaba
+//! 
+//! Za generiranje dokumenta uporabi ukaz:
+//! 
+//!     cloggen create <CSV DATOTEKA STUDIS ANKET> <JSON NABOR ODZIVOV> <TEX DOKUMENT>   
+//! 
+//! - ``<CSV DATOTEKA STUDIS ANKET>`` predstavlja izvoženo CSV datoteko z ocenami kandidata za posamezno vprašanje STUDIS anket
+//! - ``<TEX DOKUMENT>`` predstavlja, in ``<JSON NABOR ODZIVOV>`` predstavlja JSON datoteko, ki definira odgovore za posamezno mejo ocene v formatu:
+//!     ```json
+//!         {
+//!         "Vprašanje": {
+//!             "Gledano v celoti, je delo izvajalca/ke kakovostno.": {
+//!                 "1": ["Odziv 1", "Odziv 2", ...],
+//!                 "1.5": ["Odziv 1", "Odziv 2", ...],
+//!                 ...
+//!                 "4": ["Odziv 1", "Odziv 2", ...],
+//!                 "4.5": ["Odziv 1", "Odziv 2", ...],
+//!             }
+//!         }
+//!     }
+//!     ```
+//! 
+//!     Odzivi so razporejeni po večih številkah. Številke so minimalna meja povprečne ocene pri posameznem vprašanju, ki
+//!     jo mora kandidat imeti, zato da dobi enega izmed pripadajočih odzivov.
+//!     
+//!     Odziv bo izbran iz možnih odzivov, ki pripadajo prvi manjši oceni od povprečne ocene kandidata. Na primer, če ima
+//!     kandidat pri vprašanju *Gledano v celoti, je delo izvajalca/ke kakovostno.* povprečno oceno 4.3, bo ob uporabi
+//!     zgornjega JSON primera odziv izbran iz odzivov, ki pripadajo oceni 4.0 (``"4": ["Odziv 1", "Odziv 2", ...]``)
+//! - ``<TEX DOKUMENT>`` predstavlja glavni LaTeX dokument (datoteko),
+//!     ki bo uporabljen za generacijo izhodnega mnenja v PDF obliki.
+//!     Dokument mora vsebovati ``{AUTO_GEN}`` tekst, ki predstavlja lokacijo
+//!     vstavitve odzivov/odgovorov, generiranih iz zgornje JSON datoteke odzivov.
+//! 
+//! ### Popoln primer zagona
+//! ``cloggen create ocena.csv mnenje.json data/mnenje.tex``
+
+
 use clap::{Parser, Subcommand};
 use std::collections::HashMap;
 use rand::seq::SliceRandom;
@@ -47,7 +91,7 @@ fn preprocess_candidate_csv(filedata: String) -> HashMap<String, String> {
         let mut line_out;
         let mut split_i;
         for line in lines {
-            split_i = line.find("\t").unwrap();
+            split_i = line.find("\t").expect("Could not find '\t' when processing CSV");
             line_out = (format!("\"{}\"", &line[..split_i]) + &line[split_i..].replace(",", ".")).replace("\t", ",");
             olines.push(line_out);
         }
@@ -80,6 +124,34 @@ fn preprocess_candidate_csv(filedata: String) -> HashMap<String, String> {
     }
 
     map
+}
+
+
+/// Modification of [`tectonic::latex_to_pdf`] which adds stdout print to the console.
+fn compile_latex(latex: impl AsRef<str>) -> Vec<u8> {
+    let mut status: tectonic::status::NoopStatusBackend = tec::status::NoopStatusBackend::default();
+    let config = tec::config::PersistentConfig::open(false).expect("could not open config");
+    let bundle = config.default_bundle(false, &mut status).expect("could not get bundle");
+    let mut files = {
+        // Looking forward to non-lexical lifetimes!
+        let mut sess;
+        let mut sb = tec::driver::ProcessingSessionBuilder::default();
+        let format_cache_path = config.format_cache_path().expect("could not get format cache path");
+        sb.bundle(bundle)
+            .primary_input_buffer(latex.as_ref().as_bytes())
+            .tex_input_name("texput.tex")
+            .format_name("latex")
+            .format_cache_path(format_cache_path)
+            .keep_logs(false)
+            .keep_intermediates(false)
+            .print_stdout(false)
+            .output_format(tec::driver::OutputFormat::Pdf)
+            .do_not_write_output_files();
+        sess = sb.create(&mut status).unwrap();
+        sess.run(&mut status).unwrap_or_else(|_| panic!("{}", String::from_utf8(sess.get_stdout_content()).unwrap()));
+        sess.into_file_data()
+    };
+    files.remove("texput.pdf").expect("compilation was successful but file data was not created").data
 }
 
 
@@ -183,8 +255,10 @@ fn command_create(studis_csv_filepath: &PathBuf, response_json_filepath: &PathBu
     // Write output file
     output_fdata = output_fdata.replace(C_OUTPUT_LATEX_REPLACE_KEY, &(output_parts.join("\n\n")));
     let root = env::current_dir().unwrap();
+
+    // Compile latex in the same directory as the main TeX file.
     std::env::set_current_dir(tex_template_filepath.parent().unwrap()).unwrap();
-    let pdfdata = tec::latex_to_pdf(output_fdata).unwrap_or_else(|e| panic!("{} ({})", e.kind(), e.description()));
+    let pdfdata = compile_latex(output_fdata);
     std::env::set_current_dir(root).unwrap();
 
     file = File::create(format!("{}.pdf", tex_template_filepath.display())).expect("could not create final PDF");
