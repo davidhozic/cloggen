@@ -12,7 +12,7 @@ Za generiranje dokumenta uporabi ukaz:
     cloggen create <CSV DATOTEKA STUDIS ANKET> <JSON NABOR ODZIVOV> <TEX DOKUMENT>   
 
 - ``<CSV DATOTEKA STUDIS ANKET>`` predstavlja izvoženo CSV datoteko z ocenami kandidata za posamezno vprašanje STUDIS anket
-- ``<TEX DOKUMENT>`` predstavlja, in ``<JSON NABOR ODZIVOV>`` predstavlja JSON datoteko, ki definira odgovore za posamezno mejo ocene v formatu:
+- ``<JSON NABOR ODZIVOV>`` predstavlja JSON datoteko, ki definira odgovore za posamezno mejo ocene v formatu:
     ```json
         {
         "Vprašanje": {
@@ -21,7 +21,7 @@ Za generiranje dokumenta uporabi ukaz:
                 "1.5": ["Odziv 1", "Odziv 2", ...],
                 ...
                 "4": ["Odziv 1", "Odziv 2", ...],
-                "4.5": ["Odziv 1", "Odziv 2", ...],
+                "4.5": ["Kandidat ima super ocene (povprečje {MEAN} $\\pm$ {STD}).", "Odziv 2", ...],
             }
         }
     }
@@ -33,6 +33,11 @@ Za generiranje dokumenta uporabi ukaz:
     Odziv bo izbran iz možnih odzivov, ki pripadajo prvi manjši oceni od povprečne ocene kandidata. Na primer, če ima
     kandidat pri vprašanju *Gledano v celoti, je delo izvajalca/ke kakovostno.* povprečno oceno 4.3, bo ob uporabi
     zgornjega JSON primera odziv izbran iz odzivov, ki pripadajo oceni 4.0 (``"4": ["Odziv 1", "Odziv 2", ...]``)
+
+    V odziv se lahko dinamično vključi tudi **povprečje** in **standardni odklon**, kot prikazuje zgornjni JSON primer:
+    ``"4.5": ["Kandidat ima super ocene (povprečje {MEAN} $\\pm$ {STD}).", ...]``. Tu bo ``{MEAN}`` z povprečno oceno za 
+    pripadajoče vprašanje, ``{STD}`` pa s standardnim odklonom za pripadajoče vprašanje.
+
 - ``<TEX DOKUMENT>`` predstavlja glavni LaTeX dokument (datoteko),
     ki bo uporabljen za generacijo izhodnega mnenja v PDF obliki.
     Dokument mora vsebovati ``{AUTO_GEN}`` tekst, ki predstavlja lokacijo

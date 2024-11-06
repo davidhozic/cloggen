@@ -2,7 +2,7 @@
     "Vprašanje": {
         "Gledano v celoti, je delo izvajalca/ke kakovostno.": {
             "5": [],
-            "4.5": ["Kandidat je super kul in chill, :)", "Kandidat je super-duper chill, :)"],
+            "4.5": ["Kandidat je super kul in chill, :). Za njegovo delo je prejel oceno {MEAN} $\\pm$ {STD}", "Kandidat je super-duper chill, :)"],
             "4": [],
             "3": [],
             "2": [],

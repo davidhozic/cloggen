@@ -12,7 +12,7 @@
 //!     cloggen create <CSV DATOTEKA STUDIS ANKET> <JSON NABOR ODZIVOV> <TEX DOKUMENT>   
 //! 
 //! - ``<CSV DATOTEKA STUDIS ANKET>`` predstavlja izvoženo CSV datoteko z ocenami kandidata za posamezno vprašanje STUDIS anket
-//! - ``<TEX DOKUMENT>`` predstavlja, in ``<JSON NABOR ODZIVOV>`` predstavlja JSON datoteko, ki definira odgovore za posamezno mejo ocene v formatu:
+//! - ``<JSON NABOR ODZIVOV>`` predstavlja JSON datoteko, ki definira odgovore za posamezno mejo ocene v formatu:
 //!     ```json
 //!         {
 //!         "Vprašanje": {
@@ -21,7 +21,7 @@
 //!                 "1.5": ["Odziv 1", "Odziv 2", ...],
 //!                 ...
 //!                 "4": ["Odziv 1", "Odziv 2", ...],
-//!                 "4.5": ["Odziv 1", "Odziv 2", ...],
+//!                 "4.5": ["Kandidat ima super ocene (povprečje {MEAN} $\\pm$ {STD}).", "Odziv 2", ...],
 //!             }
 //!         }
 //!     }
@@ -33,6 +33,11 @@
 //!     Odziv bo izbran iz možnih odzivov, ki pripadajo prvi manjši oceni od povprečne ocene kandidata. Na primer, če ima
 //!     kandidat pri vprašanju *Gledano v celoti, je delo izvajalca/ke kakovostno.* povprečno oceno 4.3, bo ob uporabi
 //!     zgornjega JSON primera odziv izbran iz odzivov, ki pripadajo oceni 4.0 (``"4": ["Odziv 1", "Odziv 2", ...]``)
+//! 
+//!     V odziv se lahko dinamično vključi tudi **povprečje** in **standardni odklon**, kot prikazuje zgornjni JSON primer:
+//!     ``"4.5": ["Kandidat ima super ocene (povprečje {MEAN} $\\pm$ {STD}).", ...]``. Tu bo ``{MEAN}`` z povprečno oceno za 
+//!     pripadajoče vprašanje, ``{STD}`` pa s standardnim odklonom za pripadajoče vprašanje.
+//! 
 //! - ``<TEX DOKUMENT>`` predstavlja glavni LaTeX dokument (datoteko),
 //!     ki bo uporabljen za generacijo izhodnega mnenja v PDF obliki.
 //!     Dokument mora vsebovati ``{AUTO_GEN}`` tekst, ki predstavlja lokacijo
@@ -52,6 +57,7 @@ use rand::thread_rng;
 use tectonic as tec;
 use std::fs::File;
 use std::env;
+use std::fmt;
 use csv;
 
 
@@ -164,6 +170,8 @@ fn command_create(studis_csv_filepath: &PathBuf, response_json_filepath: &PathBu
     const C_JSON_MAP_QUESTION_KEY: &str = "Vprašanje";
 
     const C_OUTPUT_LATEX_REPLACE_KEY: &str = "{AUTO_GEN}";
+    const C_OUTPUT_LATEX_MEAN_KEY: &str = "{MEAN}";
+    const C_OUTPUT_LATEX_STD_KEY: &str = "{STD}";
 
     // Check the output file
     let mut file: File;
@@ -208,8 +216,12 @@ fn command_create(studis_csv_filepath: &PathBuf, response_json_filepath: &PathBu
     let categories: &sj::Map<_, _> = &json_map[C_JSON_MAP_QUESTION_KEY].as_object().expect(E_NOT_MAPPING);
     let mut idx: usize;
     let mut start_size: usize;
+
     let mut mean: f64;
     let mut std: f64;
+    let mut smean: &str;
+    let mut sstd: &str;
+
     let mut rgn = thread_rng();
 
     // Iterate each category/question of the JSON responses file
@@ -217,8 +229,13 @@ fn command_create(studis_csv_filepath: &PathBuf, response_json_filepath: &PathBu
         // Get index of the question matching JSON category
         idx = csvgrades.get(C_JSON_MAP_QUESTION_KEY).expect("CSV is missing questions key.")
             .iter().position(|x| x == cat).expect(&format!("CSV is missing category \"{cat}\""));
-        mean = csvgrades.get(C_MEAN_CSV_KEY).expect("CSV is missing the mean grade value key")[idx].parse().unwrap();
-        std = csvgrades.get(C_STD_CSV_KEY).expect("CSV is missing the std of grade key")[idx].parse().unwrap();
+
+
+        // Read the String of the mean and std, then parse them to float
+        smean = &csvgrades.get(C_MEAN_CSV_KEY).expect("CSV is missing the mean grade value key")[idx];
+        mean = smean.parse().unwrap();
+        sstd = &csvgrades.get(C_STD_CSV_KEY).expect("CSV is missing the std of grade key")[idx];
+        std = sstd.parse().unwrap();
 
         // Obtain the mapping of min. grade => array of String responses
         let grades_json = grades_json.as_object().cloned().expect(E_NOT_MAPPING);
@@ -241,7 +258,10 @@ fn command_create(studis_csv_filepath: &PathBuf, response_json_filepath: &PathBu
                     .choose(&mut rgn)
                     .expect(&format!("there are no defined responses for grade {sgrade}, category {cat:?}"));
                 let response = response.as_str().expect(&format!("responses must be strings ({response} is not)"));
-                output_parts.push(format!("% {cat} ({mean} +- {std})\n{response}"));
+                output_parts.push(
+                    response.replace(C_OUTPUT_LATEX_MEAN_KEY, smean)
+                            .replace(C_OUTPUT_LATEX_STD_KEY, sstd)
+                );
                 break;
             }
         }
