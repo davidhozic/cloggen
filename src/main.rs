@@ -57,7 +57,6 @@ use rand::thread_rng;
 use tectonic as tec;
 use std::fs::File;
 use std::env;
-use std::fmt;
 use csv;
 
 
@@ -218,7 +217,7 @@ fn command_create(studis_csv_filepath: &PathBuf, response_json_filepath: &PathBu
     let mut start_size: usize;
 
     let mut mean: f64;
-    let mut std: f64;
+    // let mut std: f64;
     let mut smean: &str;
     let mut sstd: &str;
 
@@ -235,7 +234,7 @@ fn command_create(studis_csv_filepath: &PathBuf, response_json_filepath: &PathBu
         smean = &csvgrades.get(C_MEAN_CSV_KEY).expect("CSV is missing the mean grade value key")[idx];
         mean = smean.parse().unwrap();
         sstd = &csvgrades.get(C_STD_CSV_KEY).expect("CSV is missing the std of grade key")[idx];
-        std = sstd.parse().unwrap();
+        // std = sstd.parse().unwrap();
 
         // Obtain the mapping of min. grade => array of String responses
         let grades_json = grades_json.as_object().cloned().expect(E_NOT_MAPPING);
