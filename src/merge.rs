@@ -63,7 +63,7 @@ pub fn command_merge(files: &Vec<PathBuf>, output: &PathBuf) {
         // Mean calculated over file question means.
         let mean = values.iter().sum::<f64>() / values.len() as f64;
         // Standard deviation calculated over file question means.
-        let std = values.iter().map(|num| (num - mean).powi(2)).sum::<f64>() / values.len() as f64;
+        let std = (values.iter().map(|num| (num - mean).powi(2)).sum::<f64>() / values.len() as f64).sqrt();
         qmerged.insert(
             question, 
             ((mean * 1000.0).round() / 1000.0, std)
