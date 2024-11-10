@@ -3,12 +3,12 @@
         "Gledano v celoti, je delo izvajalca/ke kakovostno.": {
             "5": [],
             "4.5": [
-                "Kandidat svoje delo v celoti izvaja precej popolno. Namreč, ankete o celotnem delu kandidata kažejo oceno {MEAN} $\\pm$ {STD}.",
+                "Kandidat svoje delo v celoti izvaja precej popolno. Namreč, ankete o celotnem delu kandidata kažejo oceno {MEAN}~$\\pm$~{STD}.",
                 "Delo kandidata je odlično (povprečje ocen {MEAN}). Kandidata spodbujamo, da delo še naprej opravlja s to odliko.",
                 "Delo kandidata v celoti je zelo kakovostno."
             ],
             "4": [],
-            "3": [],
+            "3": ["Delo kandidata v celoti bi se lahko izboljšalo. Delo je zadovoljivo (povprečna ocena {MEAN}~$\\pm$~{STD})"],
             "2": [],
             "1": []
         }

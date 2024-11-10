@@ -17,12 +17,14 @@ pub fn preprocess_candidate_csv(filedata: String) -> HashMap<String, String> {
     /// Replaces '\t' with commas and fixes the numbers to be separated by '.' instead of ','.
     fn fix_content(lines: &Vec<&str>) -> String {
         let mut olines = Vec::with_capacity(lines.len());
-        let mut line_out;
-        let mut split_i;
         for line in lines {
-            split_i = line.find("\t").expect("Could not find '\t' when processing CSV");
-            line_out = (format!("\"{}\"", &line[..split_i]) + &line[split_i..].replace(",", ".")).replace("\t", ",");
-            olines.push(line_out);
+            let line = match line.find("\t") {
+                Some(split_i) => {
+                    (format!("\"{}\"", &line[..split_i]) + &line[split_i..].replace(",", ".")).replace("\t", ",")
+                },
+                None => line.to_string()  // Nothing to fix
+            };
+            olines.push(line);
         }
         olines.join("\n")
     }

@@ -1,15 +1,20 @@
 /// Module of the ``merge`` command
 use crate::preproc::{preprocess_candidate_csv, C_GRADES_KEY};
 use std::collections::HashMap;
-use std::fs::read_to_string;
+use std::fs::{read_to_string, File};
+use std::io::Write;
 use std::path::PathBuf;
 use csv;
 
 
 const C_QUESTION_KEY: &str = "Vprašanje";
 const C_MEAN_KEY: &str = "Povprečje";
+const C_STD_KEY: &str = "Standardni odklon";
+const C_PRECISION: usize = 2;
 
 
+/// Accepts a ``file`` parameter, which is a path, preprocesses it and returns a mapping
+/// that maps a STUDIS question to the mean grade.
 fn csv_parse_question_means(file: &PathBuf) -> HashMap<String, f64> {
     let mut mapping = HashMap::new();
 
@@ -41,6 +46,8 @@ fn csv_parse_question_means(file: &PathBuf) -> HashMap<String, f64> {
 
 /// Command processing function for the ``merge`` command.
 pub fn command_merge(files: &Vec<PathBuf>, output: &PathBuf) {
+    let mut file = File::create(output)
+        .unwrap_or_else(|e| panic!("unable to open file '{}' ({e})", output.display()));
     let mut qvalues: HashMap<String, Vec<f64>> = HashMap::new();  // Question values
 
     // Iterate all files and create a mapping that maps a question to a vector of mean values.
@@ -59,9 +66,17 @@ pub fn command_merge(files: &Vec<PathBuf>, output: &PathBuf) {
         let std = values.iter().map(|num| (num - mean).powi(2)).sum::<f64>() / values.len() as f64;
         qmerged.insert(
             question, 
-            (mean, std)
+            ((mean * 1000.0).round() / 1000.0, std)
         );
     }
 
-    println!("{qmerged:#?}");
+    file.write_all((C_GRADES_KEY.to_string() + "\n").as_bytes()).expect("unable to write grades section title");
+    let mut writer = csv::Writer::from_writer(file);
+    writer.write_record(&[C_QUESTION_KEY, C_MEAN_KEY, C_STD_KEY]).expect("unable to write header");
+    for (k, (mean,  std)) in &qmerged {
+        // Write record in format (question, mean (rounded to 4 decimals), std (rounded to 4 decimals))
+        writer.write_record(&[k, &format!("{mean:.0$}", C_PRECISION), &format!("{std:.0$}", C_PRECISION)])
+            .expect("unable to write record");
+    }
+
 }

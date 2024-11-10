@@ -11,7 +11,6 @@ pub fn compile_latex(latex: impl AsRef<str>) -> Vec<u8> {
     let config = tec::config::PersistentConfig::open(false).expect("could not open config");
     let bundle = config.default_bundle(false, &mut status).expect("could not get bundle");
     let mut files = {
-        // Looking forward to non-lexical lifetimes!
         let mut sess;
         let mut sb = tec::driver::ProcessingSessionBuilder::default();
         let format_cache_path = config.format_cache_path().expect("could not get format cache path");
