@@ -57,7 +57,8 @@ mod merge;
 
 
 #[derive(Parser)]
-#[command(version, author="David")]
+#[command(version)]
+#[command(author = "David Hozic")]
 struct Args {
     #[command(subcommand)]
     command: Commands
@@ -73,7 +74,14 @@ enum Commands {
         /// JSON file of the possible responses per category per grade.
         response_json_filepath: PathBuf,
         /// Path to the output LaTeX file.
-        tex_template_filepath: PathBuf
+        tex_template_filepath: PathBuf,
+        /// The format of output file.
+        #[clap(short, long, default_value = "pdf")]
+        format: create::OutputFormat,
+
+        /// Path of the output file.
+        #[clap(short)]
+        output_filepath: Option<PathBuf>
     },
 
     /// *NOTE* **Use the ``create`` command instead to to create a habilitation report**.
@@ -100,15 +108,27 @@ fn main() {
     let cli = Args::parse();
 
     match &cli.command {
-        Commands::Create { studis_csv_filepath, response_json_filepath, tex_template_filepath } => {
-            create::command_create(studis_csv_filepath, response_json_filepath, tex_template_filepath);
+        Commands::Create {
+            studis_csv_filepath,
+            response_json_filepath,
+            tex_template_filepath,
+            format,
+            output_filepath
+        } => {
+            create::command_create(
+                studis_csv_filepath,
+                response_json_filepath,
+                tex_template_filepath,
+                format,
+                output_filepath
+            );
         }
 
         Commands::Compile { tex_file } => {
             compiler::cmd_compile(tex_file);
         }
 
-        Commands::Merge { csv_files , output} => {
+        Commands::Merge { csv_files , output}  => {
             merge::command_merge(csv_files, output);
         }
     }

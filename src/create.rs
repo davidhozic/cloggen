@@ -5,6 +5,7 @@ use std::io::{Read, Write};
 use std::path::PathBuf;
 use serde_json as sj;
 use rand::thread_rng;
+use clap::ValueEnum;
 use std::fs::File;
 use std::env;
 
@@ -12,7 +13,23 @@ use crate::compiler;
 use crate::preproc;
 
 
-pub fn command_create(studis_csv_filepath: &PathBuf, response_json_filepath: &PathBuf, tex_template_filepath: &PathBuf) {
+#[derive(ValueEnum, Clone)]
+pub enum OutputFormat {
+    #[clap(alias = "tex")]
+    Latex,
+    Pdf
+}
+
+
+/// Function that processes the CLI command ``create``
+/// It returns a string representing the output file's path.
+pub fn command_create(
+    studis_csv_filepath: &PathBuf,
+    response_json_filepath: &PathBuf,
+    tex_template_filepath: &PathBuf,
+    format: &OutputFormat,
+    output_filepath: &Option<PathBuf>
+) -> String {
     const E_NOT_MAPPING: &str = "Not a JSON mapping";
 
     const C_MEAN_CSV_KEY: &str = "Povprečje";
@@ -105,17 +122,48 @@ pub fn command_create(studis_csv_filepath: &PathBuf, response_json_filepath: &Pa
         }
     }
 
-    // Write output file
+    // Insert the generated LaTeX into our TeX source file
     output_fdata = output_fdata.replace(C_OUTPUT_LATEX_REPLACE_KEY, &(output_parts.join("\n\n")));
     let root = env::current_dir().unwrap();
 
-    // Compile latex in the same directory as the main TeX file.
-    std::env::set_current_dir(tex_template_filepath.parent().unwrap()).unwrap();
-    let pdfdata = compiler::compile_latex(output_fdata);
-    std::env::set_current_dir(root).unwrap();
+    // If no output path is given, assume the source file without extension as a basename, otherwise use the given path.
+    let mut output = match output_filepath {
+        Some(path) => path.display().to_string(),
+        None => {
+            // We can unwrap here because we tested the path by opening the file above.
+            let mut filename = tex_template_filepath.file_name().unwrap().to_str().unwrap();
 
-    file = File::create(format!("{}.pdf", tex_template_filepath.display())).expect("could not create final PDF");
-    file.write_all(&pdfdata).unwrap();
+            // Find index of the last '.' and split, removing any file-ending.
+            if let Some (idx) = filename.chars().rev().position(|x| x == '.') {
+                (filename, _) = filename.split_at(filename.len() - idx - 1);
+            }
+            tex_template_filepath.parent().unwrap().join(format!("out_{filename}")).display().to_string()
+        }
+    };
+
+    match format {
+        OutputFormat::Latex => {
+            if !output.ends_with(".tex") {
+                output += ".tex";
+            }
+
+            file = File::create(&output).expect("could not write output LaTex");
+            file.write_all(output_fdata.as_bytes()).unwrap();
+        },
+        OutputFormat::Pdf => {
+            if !output.ends_with(".pdf") {
+                output += ".pdf";
+            }
+
+            std::env::set_current_dir(tex_template_filepath.parent().unwrap()).unwrap();
+            let pdfdata = compiler::compile_latex(output_fdata);
+            std::env::set_current_dir(root).unwrap();
+            file = File::create(&output).expect("could not create final PDF");
+            file.write_all(&pdfdata).unwrap();
+        }
+    }
+
+    return output;
 }
 
 
@@ -130,7 +178,7 @@ mod tests {
 
     #[test]
     fn test_create() {
-        command_create(&PathBuf::from(CSV), &PathBuf::from(JSON), &PathBuf::from(LATEX));
-        std::fs::remove_file(LATEX.to_string() + ".pdf").expect("ouput PDF file not created");
+        let path = command_create(&PathBuf::from(CSV), &PathBuf::from(JSON), &PathBuf::from(LATEX), &OutputFormat::Pdf, &None);
+        std::fs::remove_file(path).expect("ouput PDF file not created");
     }
 }
