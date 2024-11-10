@@ -1,7 +1,9 @@
 {
     "Vprašanje": {
         "Gledano v celoti, je delo izvajalca/ke kakovostno.": {
-            "5": [],
+            "5": [
+                "Kandidat v celoti svoje delo opravlja z odliko (povp. {MEAN}). Kandidata spodbujamo, da tako v prihodnosti ostane."
+            ],
             "4.5": [
                 "Kandidat svoje delo v celoti izvaja precej popolno. Namreč, ankete o celotnem delu kandidata kažejo oceno {MEAN}~$\\pm$~{STD}.",
                 "Delo kandidata je odlično (povprečje ocen {MEAN}). Kandidata spodbujamo, da delo še naprej opravlja s to odliko.",
@@ -10,7 +12,11 @@
             "4": [],
             "3": ["Delo kandidata v celoti bi se lahko izboljšalo. Delo je zadovoljivo (povprečna ocena {MEAN}~$\\pm$~{STD})"],
             "2": [],
-            "1": []
+            "1": [
+                "Kandidatovo delo v celoti je \\textbf{nesprejemljivo}. Potrebne so nujne izboljšave, saj ocena {MEAN}~$\\pm$~{STD}) dviga resne pomisleke o kandidatove delu.",
+                "V celoti kandidat delo opravlja izjemno pomanjkljivo. Na področju celotnega dela so potrebne resne izboljšave, saj kandidatovo povprečje ({MEAN}~$\\pm$~{STD})) predstavlja porazno stanje.",
+                "Na področju celotnega dela študentske ankete nakazujejo potrebo po resnem premisleku o kandidatovem delu. Povprečna ocena {MEAN} je nesprejemljiva!"
+            ]
         }
     }
 }

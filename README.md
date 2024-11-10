@@ -5,11 +5,11 @@ Generator študentskih mnenj (za habilitacijo).
 Generiran dokument uporablja pisavo *Roboto*. V primeru, da pisava na sistemu ni nameščena, se dokument ne bo generiral.
 Za namestitev uporabi datoteke v mapi ``data/fonts/Roboto``. Namesti vse datoteke.
 
-## Uporaba
+## Generiranje dokumentov
 
 Za generiranje dokumenta uporabi ukaz:
 
-    cloggen create <CSV DATOTEKA STUDIS ANKET> <JSON NABOR ODZIVOV> <TEX DOKUMENT>   
+    cloggen create <CSV DATOTEKA STUDIS ANKET> <JSON NABOR ODZIVOV> <TEX DOKUMENT> -f <FORMAT> -o <IZHODNA POT>
 
 - ``<CSV DATOTEKA STUDIS ANKET>`` predstavlja izvoženo CSV datoteko z ocenami kandidata za posamezno vprašanje STUDIS anket
 - ``<JSON NABOR ODZIVOV>`` predstavlja JSON datoteko, ki definira odgovore za posamezno mejo ocene v formatu:
@@ -43,5 +43,21 @@ Za generiranje dokumenta uporabi ukaz:
     Dokument mora vsebovati ``{AUTO_GEN}`` tekst, ki predstavlja lokacijo
     vstavitve odzivov/odgovorov, generiranih iz zgornje JSON datoteke odzivov.
 
-### Popoln primer zagona
-``cloggen create ocena.csv mnenje.json data/mnenje.tex``
+- ``<FORMAT>`` predstavlja izhodni format. Privzeta vrednost je ``pdf`` (izhod bo .pdf datoteka),
+    lahko pa se izbere tudi ``latex`` (izhod bo .tex latex datoteka).
+- ``<IZHODNA POT>`` predstavlja pot, kamor bo shranjen generiran dokument.
+    Privzeto je ta vrednost enaka ``output_<TEX DOKUMENT>.<tex/pdf>``.
+
+## Združevanje STUDIS anket
+Cloggen omogoča združevanje večih STUDIS CSV datotek v eno skupno datoteko.
+Združijo se le povprečne ocene posameznih datotekek, tako, da se povprečijo.
+Standardni odklon je na novo izračunan iz povprečij datotek.
+
+Na primer, če imamo dve datoteki s povprečji ocen 3.2 in 5.0, potem bo novo povprečje enako 4.1, standarndi odklon pa
+bo enak 0.90.
+
+### Uporaba
+
+    cloggen merge <csv1> <csv2> ...
+
+Izhodna pot združene datoteke je privzeto ``./merged.csv``. Za lastno pot uporabi ``-o <IZHODNA POT>``
