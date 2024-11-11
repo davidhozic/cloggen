@@ -1,9 +1,11 @@
 /// Module of the ``merge`` command
 use crate::preproc::{preprocess_candidate_csv, C_GRADES_KEY};
+use crate::fs::read_file_universal;
+use core::panic;
 use std::collections::HashMap;
-use std::fs::{read_to_string, File};
-use std::io::Write;
 use std::path::PathBuf;
+use std::io::Write;
+use std::fs::File;
 use csv;
 
 
@@ -18,7 +20,9 @@ const C_PRECISION: usize = 2;
 fn csv_parse_question_means(file: &PathBuf) -> HashMap<String, f64> {
     let mut mapping = HashMap::new();
 
-    let sections = preprocess_candidate_csv(read_to_string(&file).expect("unable to read file"));
+    let sections = preprocess_candidate_csv(
+        read_file_universal(file).expect(&format!("unable to read file ({})", file.display()))
+    );
     let sec_grades = sections.get(C_GRADES_KEY)
         .unwrap_or_else(|| panic!("csv missing candidate grades section ('{C_GRADES_KEY}')"));
     
@@ -46,8 +50,6 @@ fn csv_parse_question_means(file: &PathBuf) -> HashMap<String, f64> {
 
 /// Command processing function for the ``merge`` command.
 pub fn command_merge(files: &Vec<PathBuf>, output: &PathBuf) {
-    let mut file = File::create(output)
-        .unwrap_or_else(|e| panic!("unable to open file '{}' ({e})", output.display()));
     let mut qvalues: HashMap<String, Vec<f64>> = HashMap::new();  // Question values
 
     // Iterate all files and create a mapping that maps a question to a vector of mean values.
@@ -70,6 +72,8 @@ pub fn command_merge(files: &Vec<PathBuf>, output: &PathBuf) {
         );
     }
 
+    let mut file = File::create(output)
+        .unwrap_or_else(|e| panic!("unable to open file '{}' ({e})", output.display()));
     file.write_all((C_GRADES_KEY.to_string() + "\n").as_bytes()).expect("unable to write grades section title");
     let mut writer = csv::Writer::from_writer(file);
     writer.write_record(&[C_QUESTION_KEY, C_MEAN_KEY, C_STD_KEY]).expect("unable to write header");

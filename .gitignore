@@ -14,3 +14,5 @@ Cargo.lock
 *.pdb
 .vscode/launch.json
 
+# Compiled latex code
+*.pdf

@@ -7,6 +7,7 @@ use serde_json as sj;
 use rand::thread_rng;
 use clap::ValueEnum;
 use std::fs::File;
+use crate::fs;
 use std::env;
 
 use crate::compiler;
@@ -55,10 +56,8 @@ pub fn command_create(
         );
     }
 
-    // Process CSV file. This is the file exported from STUDIS
-    let mut fdata= String::new();
-    file = File::open(studis_csv_filepath).expect(&format!("could not open studis csv file ({studis_csv_filepath:?})"));
-    file.read_to_string(&mut fdata).unwrap();
+    // Process STUDIS CSV file.
+    let fdata = fs::read_file_universal(studis_csv_filepath).expect("unable to read STUDIS csv");
     let csvgrades = preproc::parse_grades_section(preproc::preprocess_candidate_csv(fdata));
 
     // Process JSON file. This is the file containing responses for each category and each grade.

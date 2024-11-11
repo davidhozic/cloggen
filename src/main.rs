@@ -70,6 +70,7 @@ mod compiler;
 mod preproc;
 mod create;
 mod merge;
+mod fs;
 
 
 #[derive(Parser)]
