@@ -54,7 +54,7 @@ pub fn preprocess_candidate_csv(filedata: String) -> HashMap<String, String> {
 }
 
 
-pub fn parse_grades_section(sections: HashMap<String, String>, section: &String) -> HashMap<String, Vec<String>> {
+pub fn extract_section_columns(sections: HashMap<String, String>, section: &String) -> HashMap<String, Vec<String>> {
     let csvgrades: &String = sections.get(section)
         .expect(&format!("could not find key \"{section}\" in CSV STUDIS file ({:?})", sections.keys()));
 

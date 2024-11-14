@@ -59,7 +59,7 @@ pub fn command_create(
 
     // Process STUDIS CSV file.
     let fdata = fs::read_file_universal(studis_csv_filepath).expect("unable to read STUDIS csv");
-    let csvgrades = preproc::parse_grades_section(preproc::preprocess_candidate_csv(fdata), section);
+    let csvgrades = preproc::extract_section_columns(preproc::preprocess_candidate_csv(fdata), section);
 
     // Process JSON file. This is the file containing responses for each category and each grade.
     file = File::open(response_json_filepath).expect(&format!("could not open responses file ({response_json_filepath:?})"));   
@@ -172,13 +172,20 @@ mod tests {
     use std::path::PathBuf;
     use super::*;
 
-    const CSV: &str = "ocena.csv";
-    const JSON: &str = "mnenje.json";
+    const CSV: &str = "anketa.csv";
+    const JSON: &str = "odzivi.json";
     const LATEX: &str = "data/mnenje.tex";
 
     #[test]
     fn test_create() {
-        let path = command_create(&PathBuf::from(CSV), &PathBuf::from(JSON), &PathBuf::from(LATEX), &OutputFormat::Pdf, &None);
+        let path = command_create(
+            &PathBuf::from(CSV),
+            &PathBuf::from(JSON),
+            &PathBuf::from(LATEX),
+            &"Anketa o izvajalcu".to_string(),
+            &OutputFormat::Pdf,
+            &None
+        );
         std::fs::remove_file(path).expect("ouput PDF file not created");
     }
 }

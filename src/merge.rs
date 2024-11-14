@@ -1,7 +1,6 @@
 /// Module of the ``merge`` command
-use crate::preproc::preprocess_candidate_csv;
+use crate::preproc::{extract_section_columns, preprocess_candidate_csv};
 use crate::fs::read_file_universal;
-use core::panic;
 use std::collections::HashMap;
 use std::path::PathBuf;
 use std::io::Write;
@@ -19,33 +18,22 @@ const C_PRECISION: usize = 2;
 /// that maps a STUDIS question to the mean grade.
 fn csv_parse_question_means(file: &PathBuf, section: &String) -> HashMap<String, f64> {
     let mut mapping = HashMap::new();
-
     let sections = preprocess_candidate_csv(
         read_file_universal(file).expect(&format!("unable to read file ({})", file.display()))
     );
-    let sec_grades = sections.get(section)
-        .unwrap_or_else(|| panic!("csv missing candidate grades section ('{section}') [file {}]", file.display()));
-
-    let mut reader = csv::Reader::from_reader(sec_grades.as_bytes());
-    let headers: Vec<_> = reader.headers().unwrap().iter().map(|x| x.to_string()).collect();
-    let question_idx = headers.iter().position(|x| x == &C_QUESTION_KEY).unwrap_or_else(
-        || panic!("csv missing questions key ({C_QUESTION_KEY})")
-    );
-
-    let mean_idx = headers.iter().position(|x| x == &C_MEAN_KEY).unwrap_or_else(
-        || panic!("csv missing mean key ({C_MEAN_KEY})")
-    );
-
-    for record in reader.records() {
-        let record = record.unwrap();
-        let question = &record[question_idx];
-        let mean = &record[mean_idx];
-        let mean: f64 = mean.parse().unwrap_or_else(|_| panic!("could not parse mean value ({mean})"));
-        mapping.insert(question.to_string(), mean);
+    let extracted = extract_section_columns(sections, section);
+    let questions = extracted.get(C_QUESTION_KEY).unwrap();
+    let means = extracted.get(C_MEAN_KEY).unwrap();
+    let mut mean;
+    let mut smean;
+    for (i, question) in questions.into_iter().enumerate() {
+        smean = &means[i];
+        mean = smean.parse().unwrap_or_else(|_| panic!("could not parse mean value ({smean})"));
+        mapping.insert(question.clone(), mean);
     }
+
     mapping
 }
-
 
 
 /// Command processing function for the ``merge`` command.
