@@ -28,6 +28,7 @@ pub fn command_create(
     studis_csv_filepath: &PathBuf,
     response_json_filepath: &PathBuf,
     tex_template_filepath: &PathBuf,
+    section: &String,
     format: &OutputFormat,
     output_filepath: &Option<PathBuf>
 ) -> String {
@@ -58,7 +59,7 @@ pub fn command_create(
 
     // Process STUDIS CSV file.
     let fdata = fs::read_file_universal(studis_csv_filepath).expect("unable to read STUDIS csv");
-    let csvgrades = preproc::parse_grades_section(preproc::preprocess_candidate_csv(fdata));
+    let csvgrades = preproc::parse_grades_section(preproc::preprocess_candidate_csv(fdata), section);
 
     // Process JSON file. This is the file containing responses for each category and each grade.
     file = File::open(response_json_filepath).expect(&format!("could not open responses file ({response_json_filepath:?})"));   

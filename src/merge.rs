@@ -1,5 +1,5 @@
 /// Module of the ``merge`` command
-use crate::preproc::{preprocess_candidate_csv, C_GRADES_KEY};
+use crate::preproc::preprocess_candidate_csv;
 use crate::fs::read_file_universal;
 use core::panic;
 use std::collections::HashMap;
@@ -17,15 +17,15 @@ const C_PRECISION: usize = 2;
 
 /// Accepts a ``file`` parameter, which is a path, preprocesses it and returns a mapping
 /// that maps a STUDIS question to the mean grade.
-fn csv_parse_question_means(file: &PathBuf) -> HashMap<String, f64> {
+fn csv_parse_question_means(file: &PathBuf, section: &String) -> HashMap<String, f64> {
     let mut mapping = HashMap::new();
 
     let sections = preprocess_candidate_csv(
         read_file_universal(file).expect(&format!("unable to read file ({})", file.display()))
     );
-    let sec_grades = sections.get(C_GRADES_KEY)
-        .unwrap_or_else(|| panic!("csv missing candidate grades section ('{C_GRADES_KEY}')"));
-    
+    let sec_grades = sections.get(section)
+        .unwrap_or_else(|| panic!("csv missing candidate grades section ('{section}') [file {}]", file.display()));
+
     let mut reader = csv::Reader::from_reader(sec_grades.as_bytes());
     let headers: Vec<_> = reader.headers().unwrap().iter().map(|x| x.to_string()).collect();
     let question_idx = headers.iter().position(|x| x == &C_QUESTION_KEY).unwrap_or_else(
@@ -49,12 +49,12 @@ fn csv_parse_question_means(file: &PathBuf) -> HashMap<String, f64> {
 
 
 /// Command processing function for the ``merge`` command.
-pub fn command_merge(files: &Vec<PathBuf>, output: &PathBuf) {
+pub fn command_merge(files: &Vec<PathBuf>, section: &String, output: &PathBuf) {
     let mut qvalues: HashMap<String, Vec<f64>> = HashMap::new();  // Question values
 
     // Iterate all files and create a mapping that maps a question to a vector of mean values.
     for file in files {
-        for (question, mean) in csv_parse_question_means(file) {
+        for (question, mean) in csv_parse_question_means(file, section) {
             qvalues.entry(question).or_insert(Vec::new()).push(mean);
         }
     }
@@ -74,7 +74,7 @@ pub fn command_merge(files: &Vec<PathBuf>, output: &PathBuf) {
 
     let mut file = File::create(output)
         .unwrap_or_else(|e| panic!("unable to open file '{}' ({e})", output.display()));
-    file.write_all((C_GRADES_KEY.to_string() + "\n").as_bytes()).expect("unable to write grades section title");
+    file.write_all((section.clone() + "\n").as_bytes()).expect("unable to write grades section title");
     let mut writer = csv::Writer::from_writer(file);
     writer.write_record(&[C_QUESTION_KEY, C_MEAN_KEY, C_STD_KEY]).expect("unable to write header");
     for (k, (mean,  std)) in &qmerged {

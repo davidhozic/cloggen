@@ -2,10 +2,6 @@ use std::collections::HashMap;
 use csv;
 
 
-/// The STUDIS file section name of candidate grades.
-pub const C_GRADES_KEY: &str = "Anketa o izvajalcu";
-
-
 /// Preprocesses a CSV file exported from STUDIS. The result is a mapping, mapping different sections (as keys)
 /// to CSV-compatible tables, which can be parsed by the csv crate.
 pub fn preprocess_candidate_csv(filedata: String) -> HashMap<String, String> {   
@@ -58,9 +54,9 @@ pub fn preprocess_candidate_csv(filedata: String) -> HashMap<String, String> {
 }
 
 
-pub fn parse_grades_section(sections: HashMap<String, String>) -> HashMap<String, Vec<String>> {
-    let csvgrades: &String = sections.get(C_GRADES_KEY)
-        .expect(&format!("could not find key \"{C_GRADES_KEY}\" in CSV STUDIS file ({:?})", sections.keys()));
+pub fn parse_grades_section(sections: HashMap<String, String>, section: &String) -> HashMap<String, Vec<String>> {
+    let csvgrades: &String = sections.get(section)
+        .expect(&format!("could not find key \"{section}\" in CSV STUDIS file ({:?})", sections.keys()));
 
     let mut csvgrades = csv::Reader::from_reader(csvgrades.as_bytes());
     let headers = csvgrades.headers().unwrap().clone();

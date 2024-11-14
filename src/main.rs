@@ -88,10 +88,17 @@ enum Commands {
     Create {
         /// CSV file of the STUDIS grades.
         studis_csv_filepath: PathBuf,
+
         /// JSON file of the possible responses per category per grade.
         response_json_filepath: PathBuf,
+
         /// Path to the output LaTeX file.
         tex_template_filepath: PathBuf,
+
+        /// Name of the grades section to use (e.g., "Anketa o izvajalcu")
+        #[clap(short, long, default_value = "Anketa o izvajalcu")]
+        section: String,
+
         /// The format of output file.
         #[clap(short, long, default_value = "pdf")]
         format: create::OutputFormat,
@@ -113,6 +120,10 @@ enum Commands {
         #[clap(value_delimiter = ' ', num_args = 2.., required = true)]
         csv_files: Vec<PathBuf>,
 
+        /// Name of the grades section to use (e.g., "Anketa o izvajalcu")
+        #[clap(short, long, default_value = "Anketa o izvajalcu")]
+        section: String,
+
         /// Path of the output (merged) file.
         #[clap(short, default_value = "./merged.csv")]
         output: PathBuf
@@ -128,13 +139,15 @@ fn main() {
             studis_csv_filepath,
             response_json_filepath,
             tex_template_filepath,
+            section,
             format,
-            output_filepath
+            output_filepath,
         } => {
             create::command_create(
                 studis_csv_filepath,
                 response_json_filepath,
                 tex_template_filepath,
+                section,
                 format,
                 output_filepath
             );
@@ -144,8 +157,8 @@ fn main() {
             compiler::cmd_compile(tex_file);
         }
 
-        Commands::Merge { csv_files , output}  => {
-            merge::command_merge(csv_files, output);
+        Commands::Merge { csv_files , section, output}  => {
+            merge::command_merge(csv_files, section, output);
         }
     }
 }
