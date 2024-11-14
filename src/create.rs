@@ -123,7 +123,7 @@ pub fn command_create(
     }
 
     // Insert the generated LaTeX into our TeX source file
-    output_fdata = output_fdata.replace(C_OUTPUT_LATEX_REPLACE_KEY, &(output_parts.join("\n\n")));
+    output_fdata = output_fdata.replace(C_OUTPUT_LATEX_REPLACE_KEY, &(output_parts.join("\n")));
     let root = env::current_dir().unwrap();
 
     // If no output path is given, assume the source file without extension as a basename, otherwise use the given path.

@@ -1,12 +1,9 @@
 {
     "Vprašanje": {
         "Gledano v celoti, je delo izvajalca/ke kakovostno.": {
-            "5": [
-                "Kandidat v celoti svoje delo opravlja z odliko (povp. {MEAN}). Kandidata spodbujamo, da tako v prihodnosti ostane."
-            ],
             "4.5": [
                 "Kandidat svoje delo v celoti izvaja precej popolno. Namreč, ankete o celotnem delu kandidata kažejo oceno {MEAN}~$\\pm$~{STD}.",
-                "Delo kandidata je odlično (povprečje ocen {MEAN}). Kandidata spodbujamo, da delo še naprej opravlja s to odliko.",
+                "Delo kandidata je v celoti odlično (povprečje ocen {MEAN}). Kandidata spodbujamo, da delo še naprej opravlja s to odliko.",
                 "Delo kandidata v celoti je zelo kakovostno."
             ],
             "4": [],
@@ -16,6 +13,41 @@
                 "Kandidatovo delo v celoti je \\textbf{nesprejemljivo}. Potrebne so nujne izboljšave, saj ocena {MEAN}~$\\pm$~{STD}) dviga resne pomisleke o kandidatove delu.",
                 "V celoti kandidat delo opravlja izjemno pomanjkljivo. Na področju celotnega dela so potrebne resne izboljšave, saj kandidatovo povprečje ({MEAN}~$\\pm$~{STD})) predstavlja porazno stanje.",
                 "Na področju celotnega dela študentske ankete nakazujejo potrebo po resnem premisleku o kandidatovem delu. Povprečna ocena {MEAN} je nesprejemljiva!"
+            ]
+        },
+        "V predavalnico prihaja dobro pripravljen/a." : {
+            "4.5": [
+                "Kandidat v predavalnico prihaja odlično pripravljen, kar potrujeje kandidatovo povprečje ({MEAN}~$\\pm$~{STD}).",
+                "Na podlagi odličnih ocen ({MEAN}~$\\pm$~{STD}) je razvidno, da kandidat v predavalnico vstopa pripravljen.",
+                "Ko kandidat vstopi v predavalnico je odlično pripravljen, kot kažejo tudi ocene ({MEAN}~$\\pm$~{STD})."
+            ]
+        },
+        "Snov podaja na razumljiv način.": {
+            "4.5": [
+                "Kandidatovo podajanje snovi je odlično (ocena {MEAN}~$\\pm$~{STD}). Snov podaja na zelo razumljiv način.",
+                "Snov kandidat podaja na zelo razumljiv način, prostora za izboljšanje skoraj ni ({MEAN}~$\\pm$~{STD}).",
+                "Na podlagi ocen ({MEAN}~$\\pm$~{STD}) je kandidatov način podajanja snovi odlično razumljiv."
+            ]
+        },
+        "Spodbuja me h kritičnemu razmišljanju.": {
+            "4.5": [
+                "Po pedagoškem delu kandidata, se študenti močno (ocena {MEAN}~$\\pm$~{STD}) strinjajo, da so spodbujani h kritičnem razmišljanju.",
+                "Kandidat študente v ogromni meri spodbuja h kritičnem razmišljanju, kot kažejo tudi ocene anket ({MEAN}~$\\pm$~{STD})",
+                "Kritično razmišljanje študentov je s strani kandidata spodbujeno v veliki meri (povp. anket ({MEAN}~$\\pm$~{STD})."
+            ]
+        },
+        "Zna vzbuditi zanimanje za predmet.": {
+            "4.5": [
+                "Mnenje študentov (povp. anket {MEAN}~$\\pm$~{STD}) je, da kandidat odlično vbuja zanimanje za predmet, ki ga kandidat predava oz. asistira.",
+                "Kandidat je zelo uspešen pri vzbujanju zanimanja za predmet. Ankete sistema STUDIS kažejo odlične ocene ({MEAN}~$\\pm$~{STD}).",
+                "Pri vzbujanju zanimanja za predmet, ki ga predava ali asistira, je kandidatovo delo odlično (povp. anket {MEAN}~$\\pm$~{STD})."
+            ]
+        },
+        "Korektno obravnava vse študente.": {
+            "4.5": [
+                "Kandidat korektno obravnava vse študente; na podlagi ocen anket ({MEAN}~$\\pm$~{STD}) se s tem strinjaja velika večina študentov.",
+                "Kar se tiče obravnave študentov, te kandidat obravnava korektno, s čimer se strinja večina študentov (ocena {MEAN}~$\\pm$~{STD}).",
+                "Pri vprašanju o korektni obravnavi študentov, ti v anketah skoraj vsi odgovorijo pritrdilno (povp. {MEAN}~$\\pm$~{STD})."
             ]
         }
     }
