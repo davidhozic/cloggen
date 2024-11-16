@@ -25,20 +25,20 @@
         "Snov podaja na razumljiv način.": {
             "4.5": [
                 "Kandidatovo podajanje snovi je odlično (ocena {MEAN}~$\\pm$~{STD}). Snov podaja na zelo razumljiv način.",
-                "Snov kandidat podaja na zelo razumljiv način, prostora za izboljšanje skoraj ni ({MEAN}~$\\pm$~{STD}).",
+                "Snov kandidat podaja na zelo razumljiv način, prostora za izboljšanje skoraj ni (ocena anket {MEAN}~$\\pm$~{STD}).",
                 "Na podlagi ocen ({MEAN}~$\\pm$~{STD}) je kandidatov način podajanja snovi odlično razumljiv."
             ]
         },
         "Spodbuja me h kritičnemu razmišljanju.": {
             "4.5": [
                 "Po pedagoškem delu kandidata, se študenti močno (ocena {MEAN}~$\\pm$~{STD}) strinjajo, da so spodbujani h kritičnem razmišljanju.",
-                "Kandidat študente v ogromni meri spodbuja h kritičnem razmišljanju, kot kažejo tudi ocene anket ({MEAN}~$\\pm$~{STD})",
+                "Kandidat študente v ogromni meri spodbuja h kritičnem razmišljanju, kot kažejo tudi ocene anket ({MEAN}~$\\pm$~{STD}).",
                 "Kritično razmišljanje študentov je s strani kandidata spodbujeno v veliki meri (povp. anket ({MEAN}~$\\pm$~{STD})."
             ]
         },
         "Zna vzbuditi zanimanje za predmet.": {
             "4.5": [
-                "Mnenje študentov (povp. anket {MEAN}~$\\pm$~{STD}) je, da kandidat odlično vbuja zanimanje za predmet, ki ga kandidat predava oz. asistira.",
+                "Mnenje študentov je, da kandidat odlično vzbuja zanimanje za predmet, ki ga kandidat predava oz. asistira (povp. anket {MEAN}~$\\pm$~{STD}).",
                 "Kandidat je zelo uspešen pri vzbujanju zanimanja za predmet. Ankete sistema STUDIS kažejo odlične ocene ({MEAN}~$\\pm$~{STD}).",
                 "Pri vzbujanju zanimanja za predmet, ki ga predava ali asistira, je kandidatovo delo odlično (povp. anket {MEAN}~$\\pm$~{STD})."
             ]
