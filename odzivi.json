@@ -2,52 +2,52 @@
     "Vprašanje": {
         "Gledano v celoti, je delo izvajalca/ke kakovostno.": {
             "4.5": [
-                "Kandidat svoje delo v celoti izvaja precej popolno. Namreč, ankete o celotnem delu kandidata kažejo oceno {MEAN}~$\\pm$~{STD}.",
-                "Delo kandidata je v celoti odlično (povprečje ocen {MEAN}). Kandidata spodbujamo, da delo še naprej opravlja s to odliko.",
-                "Delo kandidata v celoti je zelo kakovostno."
+                "Kandidat svoje delo v celoti izvaja precej popolno; ocene študentskih anket so odlične.",
+                "Delo kandidata je v celoti odlično; kandidata k takem delu spodbujamo tudi v prihodnosti.",
+                "Delo kandidata v celoti je odlične kakovosti."
             ],
             "4": [],
-            "3": ["Delo kandidata v celoti bi se lahko izboljšalo. Delo je zadovoljivo (povprečna ocena {MEAN}~$\\pm$~{STD})"],
+            "3": ["Delo kandidata v celoti bi se lahko izboljšalo. Delo je zadovoljivo."],
             "2": [],
             "1": [
-                "Kandidatovo delo v celoti je \\textbf{nesprejemljivo}. Potrebne so nujne izboljšave, saj ocena {MEAN}~$\\pm$~{STD}) dviga resne pomisleke o kandidatove delu.",
-                "V celoti kandidat delo opravlja izjemno pomanjkljivo. Na področju celotnega dela so potrebne resne izboljšave, saj kandidatovo povprečje ({MEAN}~$\\pm$~{STD})) predstavlja porazno stanje.",
-                "Na področju celotnega dela študentske ankete nakazujejo potrebo po resnem premisleku o kandidatovem delu. Povprečna ocena {MEAN} je nesprejemljiva!"
+                "Kandidatovo delo v celoti je \\textbf{nesprejemljivo}. Potrebne so nujne izboljšave, saj študentske ocene dvigajo resne pomisleke o kandidatove delu.",
+                "V celoti kandidat delo opravlja izjemno pomanjkljivo. Na področju celotnega dela so potrebne resne izboljšave, saj povprečje študentskih anket predstavlja porazno stanje.",
+                "Na področju celotnega dela študentske ankete nakazujejo potrebo po resnem premisleku o kandidatovem delu."
             ]
         },
         "V predavalnico prihaja dobro pripravljen/a." : {
             "4.5": [
-                "Kandidat v predavalnico prihaja odlično pripravljen, kar potrujeje kandidatovo povprečje ({MEAN}~$\\pm$~{STD}).",
-                "Na podlagi odličnih ocen ({MEAN}~$\\pm$~{STD}) je razvidno, da kandidat v predavalnico vstopa pripravljen.",
-                "Ko kandidat vstopi v predavalnico je odlično pripravljen, kot kažejo tudi ocene ({MEAN}~$\\pm$~{STD})."
+                "Kandidat v predavalnico prihaja odlično pripravljen.",
+                "Na podlagi odličnih ocen  anket je razvidno, da kandidat v predavalnico vstopa pripravljen.",
+                "Ko kandidat vstopi v predavalnico je odlično pripravljen."
             ]
         },
         "Snov podaja na razumljiv način.": {
             "4.5": [
-                "Kandidatovo podajanje snovi je odlično (ocena {MEAN}~$\\pm$~{STD}). Snov podaja na zelo razumljiv način.",
-                "Snov kandidat podaja na zelo razumljiv način, prostora za izboljšanje skoraj ni (ocena anket {MEAN}~$\\pm$~{STD}).",
-                "Na podlagi ocen ({MEAN}~$\\pm$~{STD}) je kandidatov način podajanja snovi odlično razumljiv."
+                "Kandidatovo podajanje snovi je odlično; snov podaja na zelo razumljiv način.",
+                "Snov kandidat podaja na zelo razumljiv način, prostora za izboljšanje skoraj ni.",
+                "Na podlagi ocen študentskih anket je kandidatov način podajanja snovi odlično razumljiv."
             ]
         },
         "Spodbuja me h kritičnemu razmišljanju.": {
             "4.5": [
-                "Po pedagoškem delu kandidata, se študenti močno (ocena {MEAN}~$\\pm$~{STD}) strinjajo, da so spodbujani h kritičnem razmišljanju.",
-                "Kandidat študente v ogromni meri spodbuja h kritičnem razmišljanju, kot kažejo tudi ocene anket ({MEAN}~$\\pm$~{STD}).",
-                "Kritično razmišljanje študentov je s strani kandidata spodbujeno v veliki meri (povp. anket ({MEAN}~$\\pm$~{STD})."
+                "Ob pedagoškem delu kandidata se študenti močno strinjajo, da so spodbujani h kritičnem razmišljanju.",
+                "Kandidat študente v ogromni meri spodbuja h kritičnem razmišljanju, kot kažejo tudi ocene anket.",
+                "Kritično razmišljanje študentov je s strani kandidata spodbujeno v veliki meri."
             ]
         },
         "Zna vzbuditi zanimanje za predmet.": {
             "4.5": [
-                "Mnenje študentov je, da kandidat odlično vzbuja zanimanje za predmet, ki ga kandidat predava oz. asistira (povp. anket {MEAN}~$\\pm$~{STD}).",
-                "Kandidat je zelo uspešen pri vzbujanju zanimanja za predmet. Ankete sistema STUDIS kažejo odlične ocene ({MEAN}~$\\pm$~{STD}).",
-                "Pri vzbujanju zanimanja za predmet, ki ga predava ali asistira, je kandidatovo delo odlično (povp. anket {MEAN}~$\\pm$~{STD})."
+                "Mnenje študentov je, da kandidat odlično vzbuja zanimanje za predmet, ki ga kandidat predava oz. asistira.",
+                "Kandidat je zelo uspešen pri vzbujanju zanimanja za predmet. Ankete sistema STUDIS kažejo odlične ocene.",
+                "Pri vzbujanju zanimanja za predmet, ki ga predava ali asistira, je kandidatovo delo odlično."
             ]
         },
         "Korektno obravnava vse študente.": {
             "4.5": [
-                "Kandidat korektno obravnava vse študente; na podlagi ocen anket ({MEAN}~$\\pm$~{STD}) se s tem strinjaja velika večina študentov.",
-                "Kar se tiče obravnave študentov, te kandidat obravnava korektno, s čimer se strinja večina študentov (ocena {MEAN}~$\\pm$~{STD}).",
-                "Pri vprašanju o korektni obravnavi študentov, ti v anketah skoraj vsi odgovorijo pritrdilno (povp. {MEAN}~$\\pm$~{STD})."
+                "Kandidat korektno obravnava vse študente; na podlagi ocen anket  se s tem strinja velika večina študentov.",
+                "Kar se tiče obravnave študentov, te kandidat obravnava korektno, s čimer se strinja večina študentov.",
+                "Pri vprašanju o korektni obravnavi študentov, ti v anketah skoraj vsi odgovorijo pritrdilno."
             ]
         }
     }
