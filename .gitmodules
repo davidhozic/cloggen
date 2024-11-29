@@ -1,0 +1,3 @@
+[submodule "mnenja-template"]
+	path = mnenja-template
+	url = git@github.com:Studentski-svet-FE/mnenja-template.git
