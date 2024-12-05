@@ -9,10 +9,19 @@ env:
 jobs:
   build:
     runs-on: windows-latest
+    env:
+      TECTONIC_DEP_BACKEND: vcpkg
+      RUSTFLAGS: -Ctarget-feature=+crt-static
+      VCPKGRS_TRIPLET: x64-windows-static-release
     steps:
     - uses: actions/checkout@v4
     - uses: ilammy/msvc-dev-cmd@v1.4.1
-    - name: vcpkg
+
+    - name: Tectonic's vcpkg dependencies
       run: |
+        vcpkg integrate install
         vcpkg install fontconfig freetype "harfbuzz[graphite2]" icu
-    
+
+    - name: Build
+      run: |
+        cargo build
