@@ -15,14 +15,12 @@ jobs:
       VCPKGRS_TRIPLET: x64-windows-static-release
     steps:
     - uses: actions/checkout@v4
-    - uses: ilammy/msvc-dev-cmd@v1.4.1
+    - uses: TheMrMilchmann/setup-msvc-dev@v3
 
     - name: Tectonic's vcpkg dependencies
       run: |
         vcpkg integrate install
-        # vcpkg install fontconfig freetype "harfbuzz[graphite2]" icu graphite2
-        cargo vcpkg build
-        echo "VCPKG_ROOT=${CARGO_TARGET_DIR:-$(pwd)/target}/vcpkg" >> "$GITHUB_ENV"
+        vcpkg install fontconfig freetype "harfbuzz[graphite2]" icu graphite2
 
     - name: Build
       run: |
