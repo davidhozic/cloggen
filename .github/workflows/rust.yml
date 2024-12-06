@@ -19,6 +19,8 @@ jobs:
 
     - name: Tectonic's vcpkg dependencies
       run: |
+        vcpkg integrate install
+        # vcpkg install fontconfig freetype "harfbuzz[graphite2]" icu graphite2
         cargo vcpkg build
         echo "VCPKG_ROOT=${CARGO_TARGET_DIR:-$(pwd)/target}/vcpkg" >> "$GITHUB_ENV"
 
