@@ -117,7 +117,7 @@ enum Commands {
     /// Merges grades of multiple CSV grades
     Merge {
         /// The CSV files to merge. At least two values.
-        #[clap(value_delimiter = ' ', num_args = 2.., required = true)]
+        #[clap(num_args = 2.., required = true)]
         csv_files: Vec<PathBuf>,
 
         /// Name of the grades section to use (e.g., "Anketa o izvajalcu")
