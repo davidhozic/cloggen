@@ -58,7 +58,7 @@ pub fn command_create(
     }
 
     // Process STUDIS CSV file.
-    let fdata = fs::read_file_universal(studis_csv_filepath).expect("unable to read STUDIS csv");
+    let fdata = fs::read_file_universal(studis_csv_filepath).expect("unable to read STUDIS CSV");
     let csvgrades = preproc::extract_section_columns(preproc::preprocess_candidate_csv(fdata), section);
 
     // Process JSON file. This is the file containing responses for each category and each grade.

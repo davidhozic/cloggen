@@ -2,15 +2,20 @@ use std::collections::HashMap;
 use csv;
 
 
-/// Finds the delimiter of a CSV file
+/// Possible delimiters of a CSV file.
+const DELIMITERS: [char; 4] = [',', ';', '\t', ' '];
+
+
+/// Finds the delimiter of a CSV file.
+/// If the delimiter cannot be found, the default comma is returned.
 pub fn get_delimiter(content: &str) -> char {
     enum ReadState {
         Normal,
         Quote
     }
 
-    const MAX_CONTENT_ERR_PRINT: usize = 500;
-    const DELIMITERS: [char; 4] = [',', ';', '\t', ' '];
+    const MAX_CONTENT_ERR_PRINT: usize = 5000;
+
 
     let mut counts = Vec::new();
     let mut read_state = ReadState::Normal;
@@ -59,10 +64,11 @@ pub fn get_delimiter(content: &str) -> char {
     let (index, count) = counts[0].iter().enumerate().max_by_key(|(_, cnt)| **cnt).unwrap();
     if *count == 0 {
         panic!(
-            "could not detect the CSV delimiter (inconsistent use or not a CSV). Content:\n\n{}\n...",
+            "could not detect the CSV delimiter (inconsistent use or not a CSV). Content:\n\n{}",
             &content[0..MAX_CONTENT_ERR_PRINT.min(content.len())]
         );
     }
+
     DELIMITERS[index]
 }
 
@@ -75,21 +81,48 @@ pub fn preprocess_candidate_csv(filedata: String) -> HashMap<String, String> {
         Columns
     }
 
-    /// Replaces '\t' with commas and fixes the numbers to be separated by '.' instead of ','.
-    fn fix_content(lines: &Vec<&str>, delimiter: char) -> String {
-        if delimiter == ',' {
-            return lines.join("\n");
+    /// Replaces the slovenian style float notation (comma separated) with regular float notation.
+    fn fix_floats(lines: &Vec<&str>) -> String {
+        enum NumberState {
+            NaN,
+            Whole,
+            Decimal,
         }
-
+        let mut state = NumberState::NaN;
         let mut olines = Vec::with_capacity(lines.len());
+        let mut chars;
+        let mut sline;
+
         for line in lines {
-            let line = match line.find(delimiter) {
-                Some(split_i) => {
-                    (format!("\"{}\"", &line[..split_i]) + &line[split_i..].replace(",", ".")).replace(delimiter, ",")
-                },
-                None => line.to_string()  // Nothing to fix
-            };
-            olines.push(line);
+            chars = line.chars();
+            sline = String::with_capacity(line.len());
+            for char in chars {
+                sline.push(match &state {
+                    NumberState::NaN => {
+                        if char.is_numeric() {
+                            state = NumberState::Whole;
+                        }
+                        char
+                    },
+                    NumberState::Whole => {
+                        if char == ',' || char == '.' {
+                            state = NumberState::Decimal;
+                            '.'
+                        }
+                        else {
+                            char
+                        }
+                    }
+                    NumberState::Decimal => {
+                        if !char.is_numeric() {
+                            state = NumberState::NaN
+                        }
+                        char
+                    }
+                });
+            }
+
+            olines.push(sline);
         }
         olines.join("\n")
     }
@@ -98,18 +131,17 @@ pub fn preprocess_candidate_csv(filedata: String) -> HashMap<String, String> {
     let mut state = CSVParsingState::Header;
     let mut key= String::new();
     let mut key_data = Vec::new();
-    let delimiter = get_delimiter(&filedata);
 
     for line in filedata.lines() {
         match state {
             CSVParsingState::Header => {
-                key = String::from(line.trim_matches(delimiter));
+                key = String::from(line.trim_matches(DELIMITERS).trim());
                 key_data.clear();
                 state = CSVParsingState::Columns;
             }
             CSVParsingState::Columns => {
-                if line.trim_matches(delimiter) == "" {  // Empty line
-                    map.insert(key.clone(), fix_content(&key_data, delimiter));
+                if line.trim_matches(DELIMITERS).trim() == "" {  // Empty line
+                    map.insert(key.clone(), fix_floats(&key_data));
                     state = CSVParsingState::Header;
                 }
                 key_data.push(line);
@@ -118,7 +150,7 @@ pub fn preprocess_candidate_csv(filedata: String) -> HashMap<String, String> {
     }
 
     if let CSVParsingState::Columns = state {  // In case there was no new empty line
-        map.insert(key.clone(), fix_content(&key_data, delimiter));
+        map.insert(key.clone(), fix_floats(&key_data));
     }
 
     map
