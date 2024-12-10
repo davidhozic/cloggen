@@ -47,7 +47,7 @@ pub fn command_create(
     let mut output_fdata: String = String::new();
     let mut output_parts = Vec::new();
     file = File::open(tex_template_filepath).expect(&format!("could not open tex file ({tex_template_filepath:?})"));
-    file.read_to_string(&mut output_fdata).unwrap();
+    file.read_to_string(&mut output_fdata).expect(&format!("Unable to read file {tex_template_filepath:?}"));
 
     if !output_fdata.contains(C_OUTPUT_LATEX_REPLACE_KEY) {
         panic!(

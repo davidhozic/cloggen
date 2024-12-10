@@ -6,7 +6,11 @@
                 "Delo kandidata je v celoti odlično; kandidata k takem delu spodbujamo tudi v prihodnosti.",
                 "Delo kandidata v celoti je odlične kakovosti."
             ],
-            "4": [],
+            "4": [
+                "Delo kandidat v celoti opravlja zelo kakovostno.",
+                "Kandidatovo delo je v celoti zelo kakovostno.",
+                "Študenti menijo, da je kandidatovo delo v celoti zelo kakovostno."
+            ],
             "3": ["Delo kandidata v celoti bi se lahko izboljšalo. Delo je zadovoljivo."],
             "2": [],
             "1": [
@@ -16,7 +20,7 @@
             ]
         },
         "V predavalnico prihaja dobro pripravljen/a." : {
-            "4.5": [
+            "4.4": [
                 "Kandidat v predavalnico prihaja odlično pripravljen.",
                 "Na podlagi odličnih ocen  anket je razvidno, da kandidat v predavalnico vstopa pripravljen.",
                 "Ko kandidat vstopi v predavalnico je odlično pripravljen."
@@ -27,6 +31,10 @@
                 "Kandidatovo podajanje snovi je odlično; snov podaja na zelo razumljiv način.",
                 "Snov kandidat podaja na zelo razumljiv način, prostora za izboljšanje skoraj ni.",
                 "Na podlagi ocen študentskih anket je kandidatov način podajanja snovi odlično razumljiv."
+            ],
+            "4.0": [
+                "Snov kandidat podaja na zelo razumljiv način, z majhnim prostorom za izboljšanje.",
+                "Kandidat snov na predavanjih oz. vajah podaja na precej razumljiv način."
             ]
         },
         "Spodbuja me h kritičnemu razmišljanju.": {
@@ -34,6 +42,11 @@
                 "Ob pedagoškem delu kandidata se študenti močno strinjajo, da so spodbujani h kritičnem razmišljanju.",
                 "Kandidat študente v ogromni meri spodbuja h kritičnem razmišljanju, kot kažejo tudi ocene anket.",
                 "Kritično razmišljanje študentov je s strani kandidata spodbujeno v veliki meri."
+            ],
+            "4.0": [
+                "Kandidat študente h kritičnem razmišljanju spodbuja v veliki meri.",
+                "Študenti so s strani kandidata h kritičnem razmišljanju spodbujeni v veliki meri.",
+                "Kritično razmišljanje študentov je s strani kandidata zelo spodbujeno."
             ]
         },
         "Zna vzbuditi zanimanje za predmet.": {
@@ -41,6 +54,10 @@
                 "Mnenje študentov je, da kandidat odlično vzbuja zanimanje za predmet, ki ga kandidat predava oz. asistira.",
                 "Kandidat je zelo uspešen pri vzbujanju zanimanja za predmet. Ankete sistema STUDIS kažejo odlične ocene.",
                 "Pri vzbujanju zanimanja za predmet, ki ga predava ali asistira, je kandidatovo delo odlično."
+            ],
+            "4.0": [
+                "Mnenje študentov je, da kandidat vzbuja zanimanje za predmet v veliki meri, vendar tu še vedno obstaja manjši prostor za izboljšavo.",
+                "Pri vzbujanju zanimanja za predmet, ki ga predava ali asistira, je kandidatovo delo zelo dobro, z majhnim prostorom za izboljšanje."
             ]
         },
         "Korektno obravnava vse študente.": {
