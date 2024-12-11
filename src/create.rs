@@ -7,11 +7,12 @@ use serde_json as sj;
 use rand::thread_rng;
 use clap::ValueEnum;
 use std::fs::File;
-use crate::fs;
 use std::env;
 
+use crate::with_parent_path;
 use crate::compiler;
 use crate::preproc;
+use crate::fs;
 
 
 #[derive(ValueEnum, Clone)]
@@ -155,9 +156,7 @@ pub fn command_create(
                 output += ".pdf";
             }
 
-            std::env::set_current_dir(tex_template_filepath.parent().unwrap()).unwrap();
-            let pdfdata = compiler::compile_latex(output_fdata);
-            std::env::set_current_dir(root).unwrap();
+            let pdfdata = with_parent_path!(tex_template_filepath, {compiler::compile_latex(output_fdata)});
             file = File::create(&output).expect("could not create final PDF");
             file.write_all(&pdfdata).unwrap();
         }

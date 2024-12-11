@@ -68,6 +68,7 @@ use std::path::PathBuf;
 
 mod compiler;
 mod preproc;
+mod macros;
 mod create;
 mod merge;
 mod fs;

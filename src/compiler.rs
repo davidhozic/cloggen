@@ -4,6 +4,8 @@ use tectonic as tec;
 use std::io::Write;
 use std::env;
 
+use crate::with_parent_path;
+
 
 /// Modification of [`tectonic::latex_to_pdf`] which adds stdout print to the console.
 pub fn compile_latex(latex: impl AsRef<str>) -> Vec<u8> {
@@ -34,10 +36,7 @@ pub fn compile_latex(latex: impl AsRef<str>) -> Vec<u8> {
 
 pub fn cmd_compile(path: &PathBuf) {
     let fdata = read_to_string(path).expect("unable to read file");
-    let root = env::current_dir().unwrap();
-    std::env::set_current_dir(path.parent().unwrap()).unwrap();
-    let compiled = compile_latex(fdata);
-    std::env::set_current_dir(root).unwrap();
+    let compiled = with_parent_path!(path, {compile_latex(fdata)});
     let mut file = File::create(path.display().to_string() + ".pdf").expect("unable to create output file");
     file.write_all(&compiled).expect("unable to write latex to file");
 }
