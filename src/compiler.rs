@@ -9,7 +9,7 @@ use crate::with_parent_path;
 
 /// Modification of [`tectonic::latex_to_pdf`] which adds stdout print to the console.
 pub fn compile_latex(latex: impl AsRef<str>) -> Vec<u8> {
-    let mut status: tectonic::status::NoopStatusBackend = tec::status::NoopStatusBackend::default();
+    let mut status = tec::status::termcolor::TermcolorStatusBackend::new(tec::status::ChatterLevel::Minimal);
     let config = tec::config::PersistentConfig::open(false).expect("could not open config");
     let bundle = config.default_bundle(false, &mut status).expect("could not get bundle");
     let mut files = {
@@ -27,7 +27,7 @@ pub fn compile_latex(latex: impl AsRef<str>) -> Vec<u8> {
             .output_format(tec::driver::OutputFormat::Pdf)
             .do_not_write_output_files();
         sess = sb.create(&mut status).unwrap();
-        sess.run(&mut status).unwrap_or_else(|_| panic!("{}", String::from_utf8(sess.get_stdout_content()).unwrap()));
+        sess.run(&mut status).unwrap();
         sess.into_file_data()
     };
     files.remove("texput.pdf").expect("compilation was successful but file data was not created").data
