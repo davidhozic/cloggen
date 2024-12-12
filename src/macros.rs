@@ -8,7 +8,9 @@ macro_rules! with_parent_path {
         {
             let root = env::current_dir().unwrap();
             if let Some(parent_path) = $path.parent() {
-                std::env::set_current_dir(parent_path).unwrap();
+                if parent_path.exists() {  // Check if path is not empty
+                    std::env::set_current_dir(parent_path).unwrap();
+                }
             }
             let result = $block;
             std::env::set_current_dir(root).unwrap();
