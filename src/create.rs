@@ -2,7 +2,7 @@
 
 use rand::seq::SliceRandom;
 use std::io::{Read, Write};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use serde_json as sj;
 use rand::thread_rng;
 use clap::ValueEnum;
@@ -125,7 +125,6 @@ pub fn command_create(
 
     // Insert the generated LaTeX into our TeX source file
     output_fdata = output_fdata.replace(C_OUTPUT_LATEX_REPLACE_KEY, &(output_parts.join("\n")));
-    let root = env::current_dir().unwrap();
 
     // If no output path is given, assume the source file without extension as a basename, otherwise use the given path.
     let mut output = match output_filepath {
@@ -138,7 +137,11 @@ pub fn command_create(
             if let Some (idx) = filename.chars().rev().position(|x| x == '.') {
                 (filename, _) = filename.split_at(filename.len() - idx - 1);
             }
-            tex_template_filepath.parent().unwrap().join(format!("out_{filename}")).display().to_string()
+            tex_template_filepath.parent()
+                .unwrap_or(Path::new("./"))
+                .join(format!("out_{filename}"))
+                .display()
+                .to_string()
         }
     };
 
