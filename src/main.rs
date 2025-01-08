@@ -115,18 +115,20 @@ enum Commands {
         tex_file: PathBuf
     },
 
-    /// Merges grades of multiple CSV grades
+    /// Merges grades of multiple CSV files
     Merge {
-        /// The CSV files to merge. At least two values.
-        #[clap(num_args = 2.., required = true)]
-        csv_files: Vec<PathBuf>,
+        /// The CSV files to merge.
+        /// Each item can be either a glob pattern or an individual file.
+        /// Files matched by different patterns will all be combined as one.
+        #[clap(num_args = 1.., required = true)]
+        csv_file_patterns: Vec<PathBuf>,
 
         /// Name of the grades section to use (e.g., "Anketa o izvajalcu")
         #[clap(short, long, default_value = "Anketa o izvajalcu")]
         section: String,
 
         /// Path of the output (merged) file.
-        #[clap(short, default_value = "./merged.csv")]
+        #[clap(short, long, default_value = "./merged.csv")]
         output: PathBuf
     }
 }
@@ -158,8 +160,8 @@ fn main() {
             compiler::cmd_compile(tex_file);
         }
 
-        Commands::Merge { csv_files , section, output}  => {
-            merge::command_merge(csv_files, section, output);
+        Commands::Merge { csv_file_patterns , section, output}  => {
+            merge::command_merge(csv_file_patterns, section, output);
         }
     }
 }

@@ -5,6 +5,7 @@ use std::collections::HashMap;
 use std::path::PathBuf;
 use std::io::Write;
 use std::fs::File;
+use glob::glob;
 use csv;
 
 
@@ -37,13 +38,42 @@ fn csv_parse_question_means(file: &PathBuf, section: &String) -> HashMap<String,
 
 
 /// Command processing function for the ``merge`` command.
-pub fn command_merge(files: &Vec<PathBuf>, section: &String, output: &PathBuf) {
+pub fn command_merge(file_patterns: &Vec<PathBuf>, section: &String, output: &PathBuf) {
+    /// Minimum number of files each pattern in `file_patterns` should match.
+    /// If any matches less, a panic occurs.
+    const MIN_FILES_TO_MATCH: usize = 2;
+
     let mut qvalues: HashMap<String, Vec<f64>> = HashMap::new();  // Question values
 
     // Iterate all files and create a mapping that maps a question to a vector of mean values.
-    for file in files {
+    let mut files = Vec::new();
+    let mut matches;
+    let mut p;
+
+    // Combine all the file patterns together
+    for pattern in file_patterns {
+        p = pattern.to_str().unwrap_or_else(|| panic!("{} contains invalid unicode!", pattern.display()));
+        matches = glob(p).expect("invalid pattern was given");
+
+        for entry in matches {
+            match entry {
+                Ok(path) => files.push(path),
+                Err(e) => println!("warning: an error occurred during glob iteration. Error: {:?}", e)
+            }
+        }
+    }
+
+    if files.len() < MIN_FILES_TO_MATCH {
+        panic!(
+            "{file_patterns:?} together need to match at least {MIN_FILES_TO_MATCH} files, but they matched {}.",
+            files.len()
+        );
+    }
+
+    // Create mean grade mapping that maps Question => [mean grade of each file]
+    for file in &files {
         for (question, mean) in csv_parse_question_means(file, section) {
-            qvalues.entry(question).or_insert(Vec::new()).push(mean);
+            qvalues.entry(question).or_insert_with(Vec::new).push(mean);
         }
     }
 

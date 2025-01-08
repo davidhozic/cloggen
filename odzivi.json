@@ -4,26 +4,50 @@
             "4.5": [
                 "Kandidat svoje delo v celoti izvaja precej popolno; ocene študentskih anket so odlične.",
                 "Delo kandidata je v celoti odlično; kandidata k takem delu spodbujamo tudi v prihodnosti.",
-                "Delo kandidata v celoti je odlične kakovosti."
+                "Delo kandidata je v celoti odlične kakovosti."
             ],
             "4": [
-                "Delo kandidat v celoti opravlja zelo kakovostno.",
+                "Kandidat delo v celoti opravlja zelo kakovostno.",
                 "Kandidatovo delo je v celoti zelo kakovostno.",
                 "Študenti menijo, da je kandidatovo delo v celoti zelo kakovostno."
             ],
             "3": ["Delo kandidata v celoti bi se lahko izboljšalo. Delo je zadovoljivo."],
-            "2": [],
+            "2": [
+                "Delo kandidata v celoti ne dosega pričakovanj in je pomanjkljivo.",
+                "Študenti menijo, da delo kandidata potrebuje precej izboljšav.",
+                "Celotna izvedba kandidata ima resne pomanjkljivosti, ki jih je potrebno odpraviti."
+            ],
             "1": [
                 "Kandidatovo delo v celoti je \\textbf{nesprejemljivo}. Potrebne so nujne izboljšave, saj študentske ocene dvigajo resne pomisleke o kandidatove delu.",
                 "V celoti kandidat delo opravlja izjemno pomanjkljivo. Na področju celotnega dela so potrebne resne izboljšave, saj povprečje študentskih anket predstavlja porazno stanje.",
                 "Na področju celotnega dela študentske ankete nakazujejo potrebo po resnem premisleku o kandidatovem delu."
             ]
         },
-        "V predavalnico prihaja dobro pripravljen/a." : {
-            "4.4": [
+        "V predavalnico prihaja dobro pripravljen/a.": {
+            "4.5": [
                 "Kandidat v predavalnico prihaja odlično pripravljen.",
-                "Na podlagi odličnih ocen  anket je razvidno, da kandidat v predavalnico vstopa pripravljen.",
+                "Na podlagi odličnih ocen anket je razvidno, da kandidat v predavalnico vstopa pripravljen.",
                 "Ko kandidat vstopi v predavalnico je odlično pripravljen."
+            ],
+            "4": [
+                "Kandidat je večinoma zelo dobro pripravljen na predavanja.",
+                "Študenti ocenjujejo, da kandidat v predavalnico prihaja dobro pripravljen.",
+                "Kandidat je v predavalnici skoraj vedno ustrezno pripravljen."
+            ],
+            "3": [
+                "Kandidatovo pripravljenost na predavanja bi bilo mogoče izboljšati.",
+                "Študenti menijo, da kandidat ni vedno popolnoma pripravljen na predavanja.",
+                "Pripravljenost kandidata na predavanja je zadovoljiva, a ne brezhibna."
+            ],
+            "2": [
+                "Pripravljenost kandidata na predavanja je pomanjkljiva in potrebuje izboljšave.",
+                "Študenti ocenjujejo, da kandidat pogosto ni ustrezno pripravljen na predavanja.",
+                "Na predavanjih je opaziti nezadostno pripravljenost kandidata."
+            ],
+            "1": [
+                "Kandidat pogosto prihaja v predavalnico nepripravljen, kar negativno vpliva na predavanja.",
+                "Študenti poročajo o izraziti nepripravljenosti kandidata na predavanja.",
+                "Pripravljenost kandidata je na zelo nizki ravni in potrebuje takojšnjo izboljšavo."
             ]
         },
         "Snov podaja na razumljiv način.": {
@@ -35,6 +59,21 @@
             "4.0": [
                 "Snov kandidat podaja na zelo razumljiv način, z majhnim prostorom za izboljšanje.",
                 "Kandidat snov na predavanjih oz. vajah podaja na precej razumljiv način."
+            ],
+            "3": [
+                "Podajanje snovi je zadovoljivo, vendar včasih težje razumljivo.",
+                "Študenti ocenjujejo, da kandidat snov podaja razumljivo, a z možnostjo izboljšav.",
+                "Kandidat snov pogosto podaja jasno, a včasih prehitro ali preveč kompleksno."
+            ],
+            "2": [
+                "Podajanje snovi kandidata je pogosto nejasno in težko sledljivo.",
+                "Študenti opažajo pomanjkljivosti pri razumljivosti kandidatove razlage.",
+                "Razlaga snovi je pogosto premalo strukturirana in otežuje razumevanje."
+            ],
+            "1": [
+                "Kandidat snov podaja na izjemno nerazumljiv način, kar zelo otežuje učenje.",
+                "Razlaga snovi kandidata je nejasna in pogosto zavajajoča.",
+                "Podajanje snovi je popolnoma neustrezno in povzroča zmedo med študenti."
             ]
         },
         "Spodbuja me h kritičnemu razmišljanju.": {
@@ -47,6 +86,21 @@
                 "Kandidat študente h kritičnem razmišljanju spodbuja v veliki meri.",
                 "Študenti so s strani kandidata h kritičnem razmišljanju spodbujeni v veliki meri.",
                 "Kritično razmišljanje študentov je s strani kandidata zelo spodbujeno."
+            ],
+            "3": [
+                "Kandidat občasno spodbuja kritično razmišljanje, vendar bi to lahko izboljšal.",
+                "Študenti menijo, da je spodbujanje kritičnega razmišljanja povprečno.",
+                "Kandidat včasih uspe spodbuditi kritično razmišljanje, vendar ne redno."
+            ],
+            "2": [
+                "Spodbujanje kritičnega razmišljanja je redko in nezadostno.",
+                "Študenti opažajo, da jih kandidat le redko spodbudi h kritičnemu razmišljanju.",
+                "Kandidat ne daje dovolj priložnosti za razvoj kritičnega razmišljanja."
+            ],
+            "1": [
+                "Študenti se strinjajo, da kandidat sploh ne spodbuja kritičnega razmišljanja.",
+                "Kandidat popolnoma zanemarja spodbujanje kritičnega razmišljanja.",
+                "Pedagoško delo kandidata ne vključuje nobenih elementov, ki bi spodbujali kritično razmišljanje."
             ]
         },
         "Zna vzbuditi zanimanje za predmet.": {
@@ -58,6 +112,21 @@
             "4.0": [
                 "Mnenje študentov je, da kandidat vzbuja zanimanje za predmet v veliki meri, vendar tu še vedno obstaja manjši prostor za izboljšavo.",
                 "Pri vzbujanju zanimanja za predmet, ki ga predava ali asistira, je kandidatovo delo zelo dobro, z majhnim prostorom za izboljšanje."
+            ],
+            "3": [
+                "Kandidat včasih uspe vzbuditi zanimanje za predmet.",
+                "Študenti menijo, da kandidatovo delo pri vzbujanju zanimanja za predmet ni stalno učinkovito.",
+                "Vzbuditev zanimanja za predmet je pri kandidatu povprečna."
+            ],
+            "2": [
+                "Kandidat redko uspe vzbuditi zanimanje za predmet.",
+                "Študenti opažajo pomanjkljivosti pri vzbujanju zanimanja za predmet.",
+                "Vzbuditev zanimanja za predmet pri kandidatu je nezadostna."
+            ],
+            "1": [
+                "Kandidat popolnoma ne uspe vzbuditi zanimanja za predmet.",
+                "Študenti poročajo o popolnem pomanjkanju motivacije zaradi kandidatovega pristopa.",
+                "Kandidatov način poučevanja ne vzbuja nikakršnega zanimanja za predmet."
             ]
         },
         "Korektno obravnava vse študente.": {
@@ -65,6 +134,21 @@
                 "Kandidat korektno obravnava vse študente; na podlagi ocen anket  se s tem strinja velika večina študentov.",
                 "Kar se tiče obravnave študentov, te kandidat obravnava korektno, s čimer se strinja večina študentov.",
                 "Pri vprašanju o korektni obravnavi študentov, ti v anketah skoraj vsi odgovorijo pritrdilno."
+            ],
+            "3": [
+                "Kandidat korektno obravnava večino študentov, vendar obstajajo izjeme.",
+                "Študenti opažajo, da kandidat včasih obravnava nekatere študente neenakopravno.",
+                "Obravnava študentov je v večini primerov korektna, vendar ne vedno."
+            ],
+            "2": [
+                "Kandidat pogosto ne obravnava študentov enakopravno.",
+                "Študenti opažajo primere nekorektne obravnave s strani kandidata.",
+                "Obravnava študentov s strani kandidata ima večje pomanjkljivosti."
+            ],
+            "1": [
+                "Kandidat se pri obravnavi študentov vede popolnoma nekorektno.",
+                "Študenti poročajo o izrazito nepravični obravnavi s strani kandidata.",
+                "Obravnava študentov s strani kandidata je nesprejemljiva."
             ]
         }
     }
