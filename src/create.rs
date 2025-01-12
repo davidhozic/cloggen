@@ -176,7 +176,7 @@ mod tests {
 
     const CSV: &str = "anketa.csv";
     const JSON: &str = "odzivi.json";
-    const LATEX: &str = "data/mnenje.tex";
+    const LATEX: &str = "mnenja-template/mnenje.tex";
 
     #[test]
     fn test_create() {
