@@ -1,12 +1,13 @@
 /// Module related to the ``create`` command.
 
-use rand::seq::SliceRandom;
-use std::io::{Read, Write};
+use rand::distributions::Uniform;
 use std::path::{Path, PathBuf};
+use std::io::{Read, Write};
 use serde_json as sj;
-use rand::thread_rng;
+use rand::{thread_rng, Rng};
 use clap::ValueEnum;
 use std::fs::File;
+use std::time;
 use std::env;
 
 use crate::with_parent_path;
@@ -101,17 +102,37 @@ pub fn command_create(
         // Iterate sorted keys from largest grade to lowest, compare each parsed grade to the mean value of CSV grades
         // and stop when we find the key that is lower or equal than the mean.
         start_size = output_parts.len();
+
+        let epoch_ns;
+        let responses;
+        let response_idx;
+        let response;
+        let response_str;
         for (sgrade, grade) in grades.iter() {
             if (grade * 10000.0) as usize <= (mean * 10000.0) as usize {  // Prevent influence of numeric error
                 let v = grades_json.get(*sgrade).unwrap();
-                let response = v.as_array()
-                    .expect(&format!("value of Category->Grade->Value must be an array of strings. Found {v:?}"))
-                    .choose(&mut rgn)
-                    .expect(&format!("there are no defined responses for grade {sgrade}, category {cat:?}"));
-                let response = response.as_str().expect(&format!("responses must be strings ({response} is not)"));
+
+                // Query elapsed nanoseconds in order to improve randomness.
+                epoch_ns = time::SystemTime::now()
+                    .duration_since(time::UNIX_EPOCH)
+                    .expect("SystemTime is before EPOCH!")
+                    .as_nanos();
+                responses = v.as_array()
+                    .expect(&format!("value of Category->Grade->Value must be an array of strings. Found {v:?}"));
+
+                if responses.len() == 0 {
+                    panic!("there are no defined responses for grade {sgrade}, category {cat:?}");
+                }
+
+                response_idx = (
+                    (epoch_ns % responses.len() as u128
+                    + rgn.sample(Uniform::new(0, responses.len())) as u128) % responses.len() as u128
+                ) as usize;
+                response = &responses[response_idx];
+                response_str = response.as_str().expect(&format!("responses must be strings ({response} is not)"));
                 output_parts.push(
-                    response.replace(C_OUTPUT_LATEX_MEAN_KEY, smean)
-                            .replace(C_OUTPUT_LATEX_STD_KEY, sstd)
+                    response_str.replace(C_OUTPUT_LATEX_MEAN_KEY, smean)
+                                .replace(C_OUTPUT_LATEX_STD_KEY, sstd)
                 );
                 break;
             }
