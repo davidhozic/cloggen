@@ -3,7 +3,53 @@ Generator študentskih mnenj (za habilitacijo).
 
 ## Namestitev pisave (font)
 Generiran dokument uporablja pisavo *Roboto*. V primeru, da pisava na sistemu ni nameščena, se dokument ne bo generiral.
-Za namestitev uporabi datoteke v mapi ``data/fonts/Roboto``. Namesti vse datoteke.
+Za namestitev uporabi datoteke v mapi ``mnenja-template/fonts/Roboto``. Namesti vse datoteke.
+
+## Namestitev Cloggen
+
+Cloggen se zanaša na LaTeX prevajalnik imenovan [Tectonic](https://tectonic-typesetting.github.io/book/latest/index.html).
+Tectonic se zanaša na določene sistemske knjižnice, ki jih je potrebno predhodno namestiti.
+
+### Linux
+Prevajanje na Linuxu je enostavno. Namestiti je potrebno pakete preko upravljalnika paketov:
+
+    sudo apt-get install libfontconfig1-dev libgraphite2-dev libharfbuzz-dev libicu-dev libssl-dev zlib1g-dev
+
+Cloggen se potem lahko prevede z:
+
+    cargo build --release
+
+in namesti z:
+
+    cargo install --path .
+
+### Windows
+Prevajanje na Windows sistemih je malo bolj tečno.
+Najlažja pot:
+
+- namesti Visual Studio s CMake
+- namesti vcpkg:
+
+    - ``git clone https://github.com/microsoft/vcpkg.git``
+    - ``cd vcpkg; .\bootstrap-vcpkg.bat``
+    - ``./vcpkg install fontconfig freetype "harfbuzz[graphite2]" icu --triplet x64-windows-static-release``
+
+- pripravi okolje (uporaba **Git Bash**):
+
+    - pojdi v vcpkg mapo repozitorija in kopiraj pot (npr. s ``pwd``)
+    - ``export VCPKG_ROOT="polna pot do vcpkg mape tukaj"``
+    - ``export RUSTFLAGS='-Ctarget-feature=+crt-static'``
+    - ``export VCPKGRS_TRIPLET='x64-windows-static-release'``
+    - ``export TECTONIC_DEP_BACKEND=vcpkg``
+
+
+Cloggen se potem lahko prevede z:
+
+    cargo build --release
+
+in namesti z:
+
+    cargo install --path .
 
 ## Generiranje dokumentov
 
@@ -61,3 +107,5 @@ bo enak 0.90.
     cloggen merge <csv1> <csv2> ...
 
 Izhodna pot združene datoteke je privzeto ``./merged.csv``. Za lastno pot uporabi ``-o <IZHODNA POT>``
+
+
