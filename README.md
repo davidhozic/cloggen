@@ -5,7 +5,7 @@ Generator študentskih mnenj (za habilitacijo).
 Generiran dokument uporablja pisavo *Roboto*. V primeru, da pisava na sistemu ni nameščena, se dokument ne bo generiral.
 Za namestitev uporabi datoteke v mapi ``mnenja-template/fonts/Roboto``. Namesti vse datoteke.
 
-## Namestitev Cloggen
+## Prevajanje Cloggen
 
 Cloggen se zanaša na LaTeX prevajalnik imenovan [Tectonic](https://tectonic-typesetting.github.io/book/latest/index.html).
 Tectonic se zanaša na določene sistemske knjižnice, ki jih je potrebno predhodno namestiti.
