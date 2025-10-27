@@ -3,7 +3,6 @@ use egui::{Color32, FontId, RichText};
 use eframe::egui;
 
 
-
 pub fn main_gui() {
     let options = eframe::NativeOptions::default();
 
@@ -26,16 +25,11 @@ impl eframe::App for Cloggen {
         egui::CentralPanel::default().show(ctx, |ui| {
             // Toolbox
             ui.horizontal(|ui| {
-                ui.menu_button(RichText::new("Ukaz").font(FontId::proportional(24.0)), |ui| {
-                    if ui.button(RichText::new("Ustvari mnenje").font(FontId::proportional(16.0))).clicked() {
-                        self.state = UiState::NewReport;
-                    };
-                    if ui.button(RichText::new("Združi CSV").font(FontId::proportional(16.0))).clicked() {
-                        self.state = UiState::MergeCsv;
-                    };
-                    if ui.button(RichText::new("Prevedi LaTeX").font(FontId::proportional(16.0))).clicked() {
-                        self.state = UiState::CompileLatex;
-                    };
+                let current_selection: &str = self.state.clone().into();
+                egui::ComboBox::from_id_salt("state").selected_text(current_selection).show_ui(ui, |ui| {
+                    ui.selectable_value(&mut self.state, UiState::NewReport, UiState::NewReport.as_str());
+                    ui.selectable_value(&mut self.state, UiState::MergeCsv, UiState::MergeCsv.as_str());
+                    ui.selectable_value(&mut self.state, UiState::CompileLatex, UiState::CompileLatex.as_str());
                 });
             });
 
@@ -52,7 +46,10 @@ impl eframe::App for Cloggen {
                         ui.label(
                             RichText::new("Novo študentsko mnenje")
                                 .font(FontId::proportional(16.0))
-                        )
+                        );
+                        ui.centered_and_justified(|ui| {
+                            
+                        });
                     });
                 }
                 MergeCsv => {
@@ -76,11 +73,30 @@ impl eframe::App for Cloggen {
     }
 }
 
-#[derive(Default, PartialEq, Eq)]
+
+#[derive(Default, PartialEq, Eq, Clone)]
 enum UiState {
     #[default]
     NoCommand,
     NewReport,
     MergeCsv,
     CompileLatex
+}
+
+impl UiState {
+    fn as_str(self) -> &'static str {
+        use UiState::*;
+        match self {
+            NoCommand => "Izberi ukaz",
+            NewReport => "Novo poročilo",
+            MergeCsv => "Združi CSV rezultate",
+            CompileLatex => "Prevedi LaTeX",
+        }
+    }
+}
+
+impl Into<&str> for UiState {
+    fn into(self) -> &'static str {
+        self.as_str()
+    }
 }
