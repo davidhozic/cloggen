@@ -71,6 +71,7 @@ mod gui;
 
 mod compiler;
 mod preproc;
+mod config;
 mod macros;
 mod create;
 mod merge;
@@ -100,11 +101,11 @@ enum Commands {
         tex_template_filepath: PathBuf,
 
         /// Name of the grades section to use (e.g., "Anketa o izvajalcu")
-        #[clap(short, long, default_value = "Anketa o izvajalcu")]
+        #[clap(short, long, default_value = config::create::SECTION_DEFAULT)]
         section: String,
 
         /// The format of output file.
-        #[clap(short, long, default_value = "pdf")]
+        #[clap(short, long, default_value = config::create::FORMAT_DEFAULT_STR)]
         format: create::OutputFormat,
 
         /// Path of the output file.
@@ -127,11 +128,11 @@ enum Commands {
         csv_file_patterns: Vec<PathBuf>,
 
         /// Name of the grades section to use (e.g., "Anketa o izvajalcu")
-        #[clap(short, long, default_value = "Anketa o izvajalcu")]
+        #[clap(short, long, default_value = config::merge::SECTION_DEFAULT)]
         section: String,
 
         /// Path of the output (merged) file.
-        #[clap(short, long, default_value = "./merged.csv")]
+        #[clap(short, long, default_value = config::merge::OUTPUT_DEFAULT)]
         output: PathBuf
     }
 }

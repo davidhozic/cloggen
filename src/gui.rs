@@ -52,14 +52,56 @@ impl eframe::App for Cloggen {
                         })
                     });
                 }
-                UiMenuState::NewReport { csv_file , responses_file, tex_template } => {
+                UiMenuState::NewReport {
+                    csv_file , responses_file, tex_template,
+                    message, open_on_success
+                } => {
                     ui.vertical_centered(|ui| {
                         ui.heading("Novo študentsko mnenje");
 
+                        // Vhod
                         ui.add_space(10.0);
                         file_input(csv_file, ui, "STUDIS CSV", "csv");
                         file_input(responses_file, ui, "JSON nabor odzivov", "json");
                         file_input(tex_template, ui, "LaTeX predloga", "tex");
+
+                        ui.add_space(50.0);
+                        ui.vertical_centered(|ui| {
+                                if ui.button(
+                                    RichText::new("Ustvari in shrani")
+                                        .font(FontId::proportional(24.0))
+                                ).clicked() {
+                                    if let Some(path) = rfd::FileDialog::new()
+                                        .add_filter("Študentsko mnenje", &["pdf", "tex"])
+                                        .save_file()
+                                    {
+                                        match super::create::command_create(
+                                            &csv_file,
+                                            &responses_file,
+                                            &tex_template,
+                                            &super::config::create::SECTION_DEFAULT.to_string(),
+                                            &super::config::create::FORMAT_DEFAULT,
+                                            &Some(path)
+                                        ) {
+                                            Ok(filepath) => {
+                                                *message = format!("Datoteka je bila shranjena: {filepath}");
+                                                if *open_on_success {
+                                                    let _ = open::that(filepath);  // ignore errors
+                                                }
+                                            }
+                                            Err(error) => {
+                                                *message = error.to_string()
+                                            }
+                                        };
+                                    };
+                                };
+                            ui.checkbox(open_on_success, "Odpri ob uspehu");
+                        });
+
+                        // Status bottom
+                        if message.len() > 0 {
+                            ui.label(message.as_str());
+                        }
                     });
                 }
                 // MergeCsv => {
@@ -106,7 +148,9 @@ enum UiMenuState {
     NewReport {
         csv_file: PathBuf,
         responses_file: PathBuf,
-        tex_template: PathBuf
+        tex_template: PathBuf,
+        message: String,
+        open_on_success: bool
     }
 }
 
@@ -134,7 +178,13 @@ impl UiMenu {
         use UiMenu::*;
         match self {
             NoCommand => UiMenuState::NoCommand,
-            NewReport => UiMenuState::NewReport { csv_file: PathBuf::new(), responses_file: PathBuf::new(), tex_template: PathBuf::new() },
+            NewReport => UiMenuState::NewReport {
+                csv_file: PathBuf::new(),
+                responses_file: PathBuf::new(),
+                tex_template: PathBuf::new(),
+                message: String::new(),
+                open_on_success: false
+            },
             _ => todo!()
             // MergeCsv => "Združi CSV rezultate",
             // CompileLatex => "Prevedi LaTeX",
