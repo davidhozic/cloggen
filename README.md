@@ -10,6 +10,8 @@ Za namestitev uporabi datoteke v mapi ``mnenja-template/fonts/Roboto``. Namesti 
 Cloggen se zanaša na LaTeX prevajalnik imenovan [Tectonic](https://tectonic-typesetting.github.io/book/latest/index.html).
 Tectonic se zanaša na določene sistemske knjižnice, ki jih je potrebno predhodno namestiti.
 
+Neodvisno od operacijskega sistema je predhodno potrebno nastaviti C++ standard na C++17 (`CXXFLAGS=-std=c++17`).
+
 ### Linux
 Prevajanje na Linuxu je enostavno. Namestiti je potrebno pakete preko upravljalnika paketov:
 

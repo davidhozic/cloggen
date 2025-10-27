@@ -66,6 +66,9 @@
 use clap::{Parser, Subcommand};
 use std::path::PathBuf;
 
+#[cfg(feature = "gui")]
+mod gui;
+
 mod compiler;
 mod preproc;
 mod macros;
@@ -135,33 +138,42 @@ enum Commands {
 
 
 fn main() {
-    let cli = Args::parse();
+    match Args::try_parse() {  // Terminal mode
+        Ok(cli) => {
+            match &cli.command {
+                Commands::Create {
+                    studis_csv_filepath,
+                    response_json_filepath,
+                    tex_template_filepath,
+                    section,
+                    format,
+                    output_filepath,
+                } => {
+                    create::command_create(
+                        studis_csv_filepath,
+                        response_json_filepath,
+                        tex_template_filepath,
+                        section,
+                        format,
+                        output_filepath
+                    );
+                }
 
-    match &cli.command {
-        Commands::Create {
-            studis_csv_filepath,
-            response_json_filepath,
-            tex_template_filepath,
-            section,
-            format,
-            output_filepath,
-        } => {
-            create::command_create(
-                studis_csv_filepath,
-                response_json_filepath,
-                tex_template_filepath,
-                section,
-                format,
-                output_filepath
-            );
+                Commands::Compile { tex_file } => {
+                    compiler::cmd_compile(tex_file);
+                }
+
+                Commands::Merge { csv_file_patterns , section, output}  => {
+                    merge::command_merge(csv_file_patterns, section, output);
+                }
+            }
         }
-
-        Commands::Compile { tex_file } => {
-            compiler::cmd_compile(tex_file);
+        #[cfg(feature = "gui")]
+        Err(_) if std::env::args().len() == 1 => {  // Only the exe is in args => GUI mode
+            gui::main_gui();
         }
-
-        Commands::Merge { csv_file_patterns , section, output}  => {
-            merge::command_merge(csv_file_patterns, section, output);
+        Err(e) => {
+            println!("{e}");
         }
     }
 }
