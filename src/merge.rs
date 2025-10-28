@@ -17,7 +17,7 @@ const C_PRECISION: usize = 2;
 
 /// Accepts a ``file`` parameter, which is a path, preprocesses it and returns a mapping
 /// that maps a STUDIS question to the mean grade.
-fn csv_parse_question_means(file: &PathBuf, section: &String) -> HashMap<String, f64> {
+fn csv_parse_question_means(file: &PathBuf, section: &str) -> HashMap<String, f64> {
     let mut mapping = HashMap::new();
     let sections = preprocess_candidate_csv(
         read_file_universal(file).expect(&format!("unable to read file ({})", file.display()))
@@ -38,7 +38,7 @@ fn csv_parse_question_means(file: &PathBuf, section: &String) -> HashMap<String,
 
 
 /// Command processing function for the ``merge`` command.
-pub fn command_merge(file_patterns: &Vec<PathBuf>, section: &String, output: &PathBuf) {
+pub fn command_merge(file_patterns: &Vec<PathBuf>, section: &str, output: &PathBuf) {
     /// Minimum number of files each pattern in `file_patterns` should match.
     /// If any matches less, a panic occurs.
     const MIN_FILES_TO_MATCH: usize = 2;
@@ -92,7 +92,7 @@ pub fn command_merge(file_patterns: &Vec<PathBuf>, section: &String, output: &Pa
 
     let mut file = File::create(output)
         .unwrap_or_else(|e| panic!("unable to open file '{}' ({e})", output.display()));
-    file.write_all((section.clone() + "\n").as_bytes()).expect("unable to write grades section title");
+    file.write_all(section.as_bytes()).expect("unable to write grades section title");
     let mut writer = csv::Writer::from_writer(file);
     writer.write_record(&[C_QUESTION_KEY, C_MEAN_KEY, C_STD_KEY]).expect("unable to write header");
     for (k, (mean,  std)) in &qmerged {

@@ -2,7 +2,7 @@
 use egui::{Color32, FontId, Frame, RichText, Stroke, ViewportBuilder};
 use eframe::{egui};
 
-use std::path::PathBuf;
+use std::{ops::BitAnd, path::PathBuf};
 
 
 pub fn main_gui() {
@@ -105,11 +105,75 @@ impl eframe::App for Cloggen {
                         }
                     });
                 }
-                // MergeCsv => {
-                //     ui.vertical_centered(|ui| {
-                //         ui.heading("Združevanje CSV podatkov iz STUDIS anket")
-                //     });
-                // }
+                UiMenuState::MergeCsv { csv_files, selected_files, message } => {
+                    ui.vertical_centered(|ui| {
+                        ui.heading("Združevanje CSV podatkov iz STUDIS anket");
+                        
+                        // Control panel
+                        egui::TopBottomPanel::top("top").show_inside(ui, |ui| {
+                            ui.horizontal(|ui| {
+                                if ui.button("Dodaj datoteke").clicked() {
+                                    if let Some(files) = rfd::FileDialog::new().add_filter("Vhodni CSV", &["csv"]).pick_files() {
+                                        csv_files.extend(files);
+                                    }
+                                }
+                                if ui.button("Odstrani izbiro").clicked() {
+                                    let mut new_files = Vec::new();
+                                    let mut n_deleted = 0;
+                                    for (i, file) in csv_files.iter().enumerate() {
+                                        if selected_files.bitand(1 << i) == 0 {
+                                            new_files.push(file.clone());
+                                        }
+                                        else {
+                                            n_deleted += 1;
+                                        }
+
+                                        if csv_files.len() - n_deleted <= i {
+                                            *selected_files &= !(1 << i);
+                                        }
+                                    }
+                                    *csv_files = new_files;
+                                }
+
+                                const MERGE_BNT_TEXT: &str = "Združi vse datoteke";
+                                if csv_files.len() > 1 {  // Needs at least two files to merge
+                                    if ui.button(MERGE_BNT_TEXT).clicked() {
+                                        if let Some(file) = rfd::FileDialog::new().add_filter("Združen CSV", &["csv"]).save_file() {
+                                            super::merge::command_merge(&csv_files, &super::config::merge::SECTION_DEFAULT, &file);
+                                            *message = format!("Datoteka je shranjena: {}", file.display());
+                                        };
+                                    };   
+                                }
+                                else {
+                                    ui.button(RichText::new(MERGE_BNT_TEXT).weak()).on_hover_cursor(
+                                        egui::CursorIcon::NotAllowed
+                                    ).on_hover_text("Za združevanje sta potrebni vsaj dve datoteki.");
+                                }
+                            });
+
+                            // Message after operation
+                            if message.len() > 0 {
+                                ui.label(message.as_str());
+                            }
+                        });
+
+                        // Added files listbox
+                        egui::ScrollArea::vertical().show(ui, |ui|
+                        {
+                            for (i, file) in csv_files.iter().enumerate() {
+                                let selected = selected_files.bitand(1 << i) > 0;
+                                if ui.selectable_label(selected, file.to_str().unwrap()).clicked() {
+                                    if selected {
+                                        *selected_files &= !(1 << i);
+                                    }
+                                    else {
+                                        *selected_files |= 1 << i;
+                                    }
+                                };
+                            }
+                        });
+                    });
+                }
                 // CompileLatex => {
                 //     ui.vertical_centered(|ui| {
                 //         ui.heading("Prevajanje LaTeX datoteke")
@@ -152,6 +216,11 @@ enum UiMenuState {
         tex_template: PathBuf,
         message: String,
         open_on_success: bool
+    },
+    MergeCsv {
+        csv_files: Vec<PathBuf>,
+        selected_files: u32,
+        message: String,
     }
 }
 
@@ -186,8 +255,8 @@ impl UiMenu {
                 message: String::new(),
                 open_on_success: false
             },
+            MergeCsv => UiMenuState::MergeCsv { csv_files: vec![], selected_files: 0, message: String::new() },
             _ => todo!()
-            // MergeCsv => "Združi CSV rezultate",
             // CompileLatex => "Prevedi LaTeX",
         }
     }
