@@ -9,7 +9,7 @@ use crate::with_parent_path;
 
 
 /// Modification of [`tectonic::latex_to_pdf`] which adds stdout print to the console.
-pub fn compile_latex(latex: impl AsRef<str>) -> Vec<u8> {
+pub fn compile_latex(latex: impl AsRef<str>) -> std::io::Result<Vec<u8>> {
     let mut status = tec::status::termcolor::TermcolorStatusBackend::new(tec::status::ChatterLevel::Minimal);
     let config = tec::config::PersistentConfig::open(false).expect("could not open config");
     let bundle = config.default_bundle(false, &mut status).expect("could not get bundle");
@@ -28,17 +28,18 @@ pub fn compile_latex(latex: impl AsRef<str>) -> Vec<u8> {
             .output_format(tec::driver::OutputFormat::Pdf)
             .build_date(SystemTime::now())
             .do_not_write_output_files();
-        sess = sb.create(&mut status).unwrap();
-        sess.run(&mut status).unwrap();
+        sess = sb.create(&mut status)?;
+        sess.run(&mut status)?;
         sess.into_file_data()
     };
-    files.remove("texput.pdf").expect("compilation was successful but file data was not created").data
+    Ok(files.remove("texput.pdf").expect("compilation was successful but file data was not created").data)
 }
 
 
-pub fn cmd_compile(path: &PathBuf) {
-    let fdata = read_to_string(path).expect("unable to read file");
-    let compiled = with_parent_path!(path, {compile_latex(fdata)});
-    let mut file = File::create(path.display().to_string() + ".pdf").expect("unable to create output file");
-    file.write_all(&compiled).expect("unable to write latex to file");
+pub fn cmd_compile(path: &PathBuf) -> std::io::Result<()> {
+    let fdata = read_to_string(path)?;
+    let compiled = with_parent_path!(path, {compile_latex(fdata)?});
+    let mut file = File::create(path.display().to_string() + ".pdf")?;
+    file.write_all(&compiled)?;
+    Ok(())
 }

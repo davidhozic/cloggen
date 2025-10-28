@@ -161,7 +161,7 @@ fn main() {
                 }
 
                 Commands::Compile { tex_file } => {
-                    compiler::cmd_compile(tex_file);
+                    compiler::cmd_compile(tex_file).unwrap();
                 }
 
                 Commands::Merge { csv_file_patterns , section, output}  => {

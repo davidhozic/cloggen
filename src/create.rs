@@ -192,7 +192,7 @@ pub fn command_create(
                 output += ".pdf";
             }
 
-            let pdfdata = with_parent_path!(tex_template_filepath, {compiler::compile_latex(output_fdata)});
+            let pdfdata = with_parent_path!(tex_template_filepath, {compiler::compile_latex(output_fdata)?});
             file = File::create(&output).with_context(|| "could not create final PDF")?;
             file.write_all(&pdfdata)?;
         }

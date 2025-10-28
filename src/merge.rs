@@ -93,6 +93,7 @@ pub fn command_merge(file_patterns: &Vec<PathBuf>, section: &str, output: &PathB
     let mut file = File::create(output)
         .unwrap_or_else(|e| panic!("unable to open file '{}' ({e})", output.display()));
     file.write_all(section.as_bytes()).expect("unable to write grades section title");
+    file.write_all("\n".as_bytes()).unwrap();
     let mut writer = csv::Writer::from_writer(file);
     writer.write_record(&[C_QUESTION_KEY, C_MEAN_KEY, C_STD_KEY]).expect("unable to write header");
     for (k, (mean,  std)) in &qmerged {
