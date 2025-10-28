@@ -1,5 +1,6 @@
 use std::fs::{read_to_string, File};
 use std::path::PathBuf;
+use std::time::SystemTime;
 use tectonic as tec;
 use std::io::Write;
 use std::env;
@@ -25,6 +26,7 @@ pub fn compile_latex(latex: impl AsRef<str>) -> Vec<u8> {
             .keep_intermediates(false)
             .print_stdout(false)
             .output_format(tec::driver::OutputFormat::Pdf)
+            .build_date(SystemTime::now())
             .do_not_write_output_files();
         sess = sb.create(&mut status).unwrap();
         sess.run(&mut status).unwrap();
