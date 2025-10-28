@@ -157,7 +157,7 @@ fn main() {
                         section,
                         format,
                         output_filepath
-                    );
+                    ).unwrap();
                 }
 
                 Commands::Compile { tex_file } => {

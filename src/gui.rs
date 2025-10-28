@@ -3,20 +3,9 @@ use egui::{Color32, FontId, Frame, RichText, Stroke, ViewportBuilder};
 use eframe::{egui};
 
 use std::path::PathBuf;
-use std::cell::Cell;
-
-
-thread_local! {
-    static PANIC_INFO: Cell<Option<String>> = const { Cell::new(None) };
-}
 
 
 pub fn main_gui() {
-    // Forward panic to PANIC_INFO
-    std::panic::set_hook(Box::new(|e| {
-         PANIC_INFO.with(|trace| trace.set(Some(e.payload().downcast_ref::<String>().unwrap().to_string())));
-    }));
-
     // Setup GUI
     let options = eframe::NativeOptions {
         viewport: ViewportBuilder::default().with_drag_and_drop(false),
@@ -87,25 +76,22 @@ impl eframe::App for Cloggen {
                                         .add_filter("Študentsko mnenje", &["pdf", "tex"])
                                         .save_file()
                                     {
-                                        match std::panic::catch_unwind(|| super::create::command_create(
+                                        match super::create::command_create(
                                             &csv_file,
                                             &responses_file,
                                             &tex_template,
                                             &super::config::create::SECTION_DEFAULT.to_string(),
                                             &super::config::create::FORMAT_DEFAULT,
                                             &Some(path)
-                                        )) {
+                                        ) {
                                             Ok(filepath) => {
                                                 *message = format!("Datoteka je bila shranjena: {filepath}");
                                                 if *open_on_success {
                                                     let _ = open::that(filepath);
                                                 }
                                             }
-                                            Err(_) => {
-                                                *message = format!(
-                                                    "Napaka (nit je sprožila paniko!): {}",
-                                                    PANIC_INFO.with(|p| p.take()).unwrap()
-                                                );
+                                            Err(err) => {
+                                                *message = format!("Napaka: {}", err);
                                             }
                                         };
                                     };
