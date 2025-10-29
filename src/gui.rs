@@ -36,7 +36,6 @@ impl eframe::App for Cloggen {
             egui::ComboBox::from_id_salt("state").selected_text(current_selection).show_ui(ui, |ui| {
                 ui.selectable_value(&mut self.menu, UiMenu::NewReport, UiMenu::NewReport.as_str());
                 ui.selectable_value(&mut self.menu, UiMenu::MergeCsv, UiMenu::MergeCsv.as_str());
-                ui.selectable_value(&mut self.menu, UiMenu::CompileLatex, UiMenu::CompileLatex.as_str());
             });
 
             // Reinitialize the menu state
@@ -73,7 +72,7 @@ impl eframe::App for Cloggen {
                                         .font(FontId::proportional(24.0))
                                 ).clicked() {
                                     if let Some(path) = rfd::FileDialog::new()
-                                        .add_filter("Študentsko mnenje", &["pdf", "tex"])
+                                        .add_filter("PDF", &["pdf"])
                                         .save_file()
                                     {
                                         match super::create::command_create(
@@ -113,7 +112,7 @@ impl eframe::App for Cloggen {
                         egui::TopBottomPanel::top("top").show_inside(ui, |ui| {
                             ui.horizontal_wrapped(|ui| {
                                 if ui.button("Dodaj datoteke").clicked() {
-                                    if let Some(files) = rfd::FileDialog::new().add_filter("Vhodni CSV", &["csv"]).pick_files() {
+                                    if let Some(files) = rfd::FileDialog::new().add_filter("CSV (več datotek)", &["csv"]).pick_files() {
                                         csv_files.extend(files);
                                     }
                                 }
@@ -138,7 +137,7 @@ impl eframe::App for Cloggen {
                                 const MERGE_BNT_TEXT: &str = "Združi vse datoteke";
                                 if csv_files.len() > 1 {  // Needs at least two files to merge
                                     if ui.button(MERGE_BNT_TEXT).clicked() {
-                                        if let Some(file) = rfd::FileDialog::new().add_filter("Združen CSV", &["csv"]).save_file() {
+                                        if let Some(file) = rfd::FileDialog::new().add_filter("CSV", &["csv"]).save_file() {
                                             match super::merge::command_merge(
                                                 &csv_files,
                                                 &super::config::merge::SECTION_DEFAULT,
@@ -193,11 +192,6 @@ impl eframe::App for Cloggen {
                         });
                     });
                 }
-                // CompileLatex => {
-                //     ui.vertical_centered(|ui| {
-                //         ui.heading("Prevajanje LaTeX datoteke")
-                //     });
-                // }
             }
         });
     }
@@ -212,7 +206,7 @@ fn file_input(file_var: &mut PathBuf, ui: &mut egui::Ui, heading: &str, extensio
         ui.columns(2, |ui| {
             let button = ui[0].button("Izberi datoteko");
             if button.clicked() {
-                if let Some(path) = rfd::FileDialog::new().add_filter(extension, &[extension]).pick_file() {
+                if let Some(path) = rfd::FileDialog::new().add_filter(extension.to_uppercase(), &[extension]).pick_file() {
                     *file_var = path;
                 }
             }
@@ -249,7 +243,6 @@ enum UiMenu {
     NoCommand,
     NewReport,
     MergeCsv,
-    CompileLatex
 }
 
 impl UiMenu {
@@ -259,7 +252,6 @@ impl UiMenu {
             NoCommand => "Izberi ukaz",
             NewReport => "Novo mnenje",
             MergeCsv => "Združi CSV rezultate",
-            CompileLatex => "Prevedi LaTeX",
         }
     }
 
@@ -274,9 +266,7 @@ impl UiMenu {
                 message: String::new(),
                 open_on_success: false
             },
-            MergeCsv => UiMenuState::MergeCsv { csv_files: vec![], selected_files: 0, message: String::new() },
-            _ => todo!()
-            // CompileLatex => "Prevedi LaTeX",
+            MergeCsv => UiMenuState::MergeCsv { csv_files: vec![], selected_files: 0, message: String::new() }
         }
     }
 }
