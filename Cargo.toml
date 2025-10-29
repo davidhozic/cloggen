@@ -3,6 +3,7 @@ name = "cloggen"
 version = "1.4.0"
 edition = "2021"
 license = "MIT"
+description = "Utility for automatic opinion generation for habilitation reports of the Student Council FE UL (ŠSFE)."
 
 [dependencies]
 clap = { version = "4.5.20", features = ["derive"] }
