@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use anyhow::{Context, Result, anyhow};
 use csv;
 
 
@@ -8,7 +9,7 @@ const DELIMITERS: [char; 4] = [',', ';', '\t', ' '];
 
 /// Finds the delimiter of a CSV file.
 /// If the delimiter cannot be found, the default comma is returned.
-pub fn get_delimiter(content: &str) -> char {
+pub fn get_delimiter(content: &str) -> Result<char> {
     enum ReadState {
         Normal,
         Quote
@@ -63,13 +64,13 @@ pub fn get_delimiter(content: &str) -> char {
     // from the possible delimiters tables.
     let (index, count) = counts[0].iter().enumerate().max_by_key(|(_, cnt)| **cnt).unwrap();
     if *count == 0 {
-        panic!(
+        return Err(anyhow!(
             "could not detect the CSV delimiter (inconsistent use or not a CSV). Content:\n\n{}",
             &content[0..MAX_CONTENT_ERR_PRINT.min(content.len())]
-        );
+        ));
     }
 
-    DELIMITERS[index]
+    Ok(DELIMITERS[index])
 }
 
 
@@ -157,26 +158,23 @@ pub fn preprocess_candidate_csv(filedata: String) -> HashMap<String, String> {
 }
 
 
-pub fn extract_section_columns(sections: HashMap<String, String>, section: &str) -> HashMap<String, Vec<String>> {
+pub fn extract_section_columns(sections: HashMap<String, String>, section: &str) -> Result<HashMap<String, Vec<String>>> {
     let csvgrades: &String = sections.get(section)
-        .expect(&format!("could not find key \"{section}\" in CSV STUDIS file ({:?})", sections.keys()));
+        .with_context(|| format!("could not find key \"{section}\" in CSV STUDIS file ({:?})", sections.keys()))?;
 
-    let delimiter = get_delimiter(&csvgrades);
+    let delimiter = get_delimiter(&csvgrades)?;
     let mut csvgrades = csv::ReaderBuilder::new()
         .delimiter(delimiter as u8)
         .from_reader(csvgrades.as_bytes());
 
-    let headers = csvgrades.headers().unwrap().clone();
-    let records: Vec<Vec<String>> = csvgrades.records()
-        .map(|x| x.unwrap().iter().map(|x| x.to_string()).collect()).collect();
-
-    let mut csvgrades = HashMap::new();
-    for (c, header) in headers.iter().enumerate() {
-        let mut column_data = Vec::new();
-        for record in &records {
-            column_data.push(record[c].clone());
+    /* Transpose the CSV. That is, return a mapping of Header -> Vec<Vertical data> */
+    let headers: Vec<String> = csvgrades.headers()?.iter().map(|h| h.to_string()).collect();
+    let mut column_map: HashMap<String, Vec<String>> = HashMap::from_iter(headers.iter().map(|h| (h.clone(), Vec::new())));
+    for record in csvgrades.records() {
+        let record = record?;
+        for (header, column) in headers.iter().zip(record.iter()) {
+            column_map.get_mut(header).unwrap().push(column.to_string());
         }
-        csvgrades.insert(header.to_string(), column_data);
     }
-    csvgrades
+    Ok(column_map)
 }

@@ -165,7 +165,7 @@ fn main() {
                 }
 
                 Commands::Merge { csv_file_patterns , section, output}  => {
-                    merge::command_merge(csv_file_patterns, section, output);
+                    merge::command_merge(csv_file_patterns, section, output).unwrap();
                 }
             }
         }

@@ -1,5 +1,5 @@
 //! Module defining Cloggen's Graphical User Interface.
-use egui::{Color32, FontId, Frame, RichText, Stroke, ViewportBuilder};
+use egui::{Color32, FontId, Frame, PopupAnchor, RichText, Stroke, ViewportBuilder};
 use eframe::{egui};
 
 use std::{ops::BitAnd, path::PathBuf};
@@ -111,7 +111,7 @@ impl eframe::App for Cloggen {
                         
                         // Control panel
                         egui::TopBottomPanel::top("top").show_inside(ui, |ui| {
-                            ui.horizontal(|ui| {
+                            ui.horizontal_wrapped(|ui| {
                                 if ui.button("Dodaj datoteke").clicked() {
                                     if let Some(files) = rfd::FileDialog::new().add_filter("Vhodni CSV", &["csv"]).pick_files() {
                                         csv_files.extend(files);
@@ -139,15 +139,34 @@ impl eframe::App for Cloggen {
                                 if csv_files.len() > 1 {  // Needs at least two files to merge
                                     if ui.button(MERGE_BNT_TEXT).clicked() {
                                         if let Some(file) = rfd::FileDialog::new().add_filter("Združen CSV", &["csv"]).save_file() {
-                                            super::merge::command_merge(&csv_files, &super::config::merge::SECTION_DEFAULT, &file);
-                                            *message = format!("Datoteka je shranjena: {}", file.display());
+                                            match super::merge::command_merge(
+                                                &csv_files,
+                                                &super::config::merge::SECTION_DEFAULT,
+                                                &file
+                                            ) {
+                                                Ok(()) => *message = format!("Datoteka je shranjena: {}", file.display()),
+                                                Err(e) => *message = format!("Napaka: {e}")
+                                            }
                                         };
                                     };   
                                 }
                                 else {
-                                    ui.button(RichText::new(MERGE_BNT_TEXT).weak()).on_hover_cursor(
-                                        egui::CursorIcon::NotAllowed
-                                    ).on_hover_text("Za združevanje sta potrebni vsaj dve datoteki.");
+                                    // Display a button with grayed out text and set the cursor to the denied symbol
+                                    // on hover.
+                                    let bnt = ui.button(RichText::new(MERGE_BNT_TEXT).weak())
+                                        .on_hover_cursor(egui::CursorIcon::NotAllowed);
+
+                                    // Show a tooltip instantly when hovering.
+                                    if bnt.hovered() {
+                                        egui::Tooltip::always_open(
+                                            ctx.clone(),
+                                            bnt.layer_id,
+                                            bnt.id,
+                                            PopupAnchor::ParentRect(bnt.rect)
+                                        ).show(|ui| {
+                                            ui.label("Potrebni sta vsaj dve datoteki")
+                                        });
+                                    }
                                 }
                             });
 
