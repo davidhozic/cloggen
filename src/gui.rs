@@ -1,8 +1,10 @@
 //! Module defining Cloggen's Graphical User Interface.
-use egui::{Color32, FontId, Frame, PopupAnchor, RichText, Stroke, ViewportBuilder};
+use egui::{Color32, FontId, Frame, Id, PopupAnchor, RichText, Stroke, ViewportBuilder};
 use eframe::{egui};
 
-use std::{ops::BitAnd, path::PathBuf};
+use std::time::Instant;
+use std::path::PathBuf;
+use std::ops::BitAnd;
 
 
 pub fn main_gui() {
@@ -54,55 +56,89 @@ impl eframe::App for Cloggen {
                 }
                 UiMenuState::NewReport {
                     csv_file , responses_file, tex_template,
-                    message, open_on_success
+                    message, open_on_success, state
                 } => {
-                    ui.vertical_centered(|ui| {
-                        ui.heading("Novo študentsko mnenje");
-
-                        // Vhod
-                        ui.add_space(10.0);
-                        file_input(csv_file, ui, "STUDIS CSV", "csv");
-                        file_input(responses_file, ui, "JSON nabor odzivov", "json");
-                        file_input(tex_template, ui, "LaTeX predloga", "tex");
-
-                        ui.add_space(50.0);
-                        ui.vertical_centered(|ui| {
-                                if ui.button(
-                                    RichText::new("Ustvari in shrani")
-                                        .font(FontId::proportional(24.0))
-                                ).clicked() {
-                                    if let Some(path) = rfd::FileDialog::new()
-                                        .add_filter("PDF", &["pdf"])
-                                        .save_file()
-                                    {
-                                        match super::create::command_create(
-                                            &csv_file,
-                                            &responses_file,
-                                            &tex_template,
-                                            &super::config::create::SECTION_DEFAULT.to_string(),
-                                            &super::config::create::FORMAT_DEFAULT,
-                                            &Some(path)
-                                        ) {
-                                            Ok(filepath) => {
-                                                *message = format!("Datoteka je bila shranjena: {filepath}");
+                    match state {
+                        NewReportState::LatexProcessing { handle: maybe_handle, start_time } => {
+                            egui::Modal::new(Id::new("latex_compiling")).show(ctx, |ui| {
+                                ui.label("Prenašanje LaTeX paketov in prevajanje");
+                                ui.add(egui::ProgressBar::new(start_time.elapsed().as_secs_f32() % 1.0)
+                                    .animate(true));
+                            });
+                            if let Some(handle) = maybe_handle && handle.is_finished() {
+                                match maybe_handle.take().unwrap().join() {
+                                    Ok(call_result) => {
+                                        match call_result {
+                                            Ok(filename) => {
+                                                *message = format!("Datoteka je bila shranjena {filename}");
                                                 if *open_on_success {
-                                                    let _ = open::that(filepath);
+                                                    // Open, ignore errors
+                                                    let _ = open::that(filename);
                                                 }
-                                            }
-                                            Err(err) => {
-                                                *message = format!("Napaka: {}", err);
-                                            }
+                                            },
+                                            Err(err) => *message = format!("Napaka: {err}")
+                                         }
+                                    }
+                                    Err(panic_err) => {
+                                        if let Some(err_cast) = panic_err.downcast_ref::<&str>() {
+                                            *message = format!("Latex prevajalnik je paničaril! Napaka: {err_cast}");
+                                        }
+                                        else {
+                                            *message = "Neznana napaka v prevajanju".to_string();
+                                        }
+                                    }
+                                }
+                                *state = NewReportState::UserInput;
+                            }
+                        },
+                        NewReportState::UserInput => {
+                            ui.vertical_centered(|ui| {
+                                ui.heading("Novo študentsko mnenje");
+
+                                // Vhod
+                                ui.add_space(10.0);
+                                file_input(csv_file, ui, "STUDIS CSV", "csv");
+                                file_input(responses_file, ui, "JSON nabor odzivov", "json");
+                                file_input(tex_template, ui, "LaTeX predloga", "tex");
+
+                                ui.add_space(50.0);
+                                ui.vertical_centered(|ui| {
+                                    if ui.button(
+                                        RichText::new("Ustvari in shrani")
+                                            .font(FontId::proportional(24.0))
+                                    ).clicked() {
+                                        if let Some(path) = rfd::FileDialog::new()
+                                            .add_filter("PDF", &["pdf"])
+                                            .save_file()
+                                        {
+
+                                            let csv_file = csv_file.clone();
+                                            let respones = responses_file.clone();
+                                            let tex = tex_template.clone();
+                                            let handle = Some(std::thread::spawn(move || {
+                                                super::create::command_create(
+                                                    &csv_file,
+                                                    &respones,
+                                                    &tex,
+                                                    &super::config::create::SECTION_DEFAULT.to_string(),
+                                                    &super::config::create::FORMAT_DEFAULT,
+                                                    &Some(path.clone())
+                                                )
+                                            }));
+                                            *state = NewReportState::LatexProcessing { handle, start_time: Instant::now() };
                                         };
                                     };
-                                };
-                            ui.checkbox(open_on_success, "Odpri ob uspehu");
-                        });
+                                    ui.checkbox(open_on_success, "Odpri ob uspehu");
+                                });
 
-                        // Status bottom
-                        if message.len() > 0 {
-                            ui.label(message.as_str());
+                                // Status bottom
+                                if message.len() > 0 {
+                                    ui.label(message.as_str());
+                                }
+                            });
                         }
-                    });
+                    }
+                    
                 }
                 UiMenuState::MergeCsv { csv_files, selected_files, message } => {
                     ui.vertical_centered(|ui| {
@@ -228,7 +264,8 @@ enum UiMenuState {
         responses_file: PathBuf,
         tex_template: PathBuf,
         message: String,
-        open_on_success: bool
+        open_on_success: bool,
+        state: NewReportState
     },
     MergeCsv {
         csv_files: Vec<PathBuf>,
@@ -264,7 +301,8 @@ impl UiMenu {
                 responses_file: PathBuf::new(),
                 tex_template: PathBuf::new(),
                 message: String::new(),
-                open_on_success: false
+                open_on_success: false,
+                state: NewReportState::UserInput
             },
             MergeCsv => UiMenuState::MergeCsv { csv_files: vec![], selected_files: 0, message: String::new() }
         }
@@ -274,5 +312,18 @@ impl UiMenu {
 impl Into<&str> for UiMenu {
     fn into(self) -> &'static str {
         self.as_str()
+    }
+}
+
+/// The state of the UI when in the NewReport
+/// command menu.
+enum NewReportState {
+    /// User is inputing information
+    UserInput,
+    /// The LaTeX code is compiling or the compiler
+    /// is downloading packages.
+    LatexProcessing {
+        handle: Option<std::thread::JoinHandle<anyhow::Result<String>>>,
+        start_time: Instant
     }
 }
