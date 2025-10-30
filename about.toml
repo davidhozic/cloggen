@@ -7,7 +7,12 @@ accepted = [
     "WTFPL",
     "CC0-1.0",
     "Artistic-2.0",
-    "ISC"
+    "ISC",
+    "Zlib",
+    "BSL-1.0",
+    "OFL-1.1",
+    "Ubuntu-font-1.0",
+    "BSD-2-Clause"
 ]
 
 ignore-build-dependencies = true
