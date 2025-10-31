@@ -92,7 +92,7 @@ impl eframe::App for Cloggen {
                                     Ok(call_result) => {
                                         match call_result {
                                             Ok(filename) => {
-                                                *message = format!("Datoteka je bila shranjena {filename}");
+                                                *message = format!("Datoteka je bila shranjena: {filename}");
                                                 if *open_on_success {
                                                     // Open, ignore errors
                                                     let _ = open::that(filename);
