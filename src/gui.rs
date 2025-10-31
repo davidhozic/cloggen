@@ -48,7 +48,7 @@ impl eframe::App for Cloggen {
         egui::CentralPanel::default().show(ctx, |ui| {
             // Toolbox
             let menu_current = self.menu.clone();
-            let current_selection: &str = self.menu.clone().into();
+            let current_selection: &str = self.menu.clone().as_str();
             egui::ComboBox::from_id_salt("state").selected_text(current_selection).show_ui(ui, |ui| {
                 ui.selectable_value(&mut self.menu, UiMenu::NewReport, UiMenu::NewReport.as_str());
                 ui.selectable_value(&mut self.menu, UiMenu::MergeCsv, UiMenu::MergeCsv.as_str());
@@ -133,14 +133,14 @@ impl eframe::App for Cloggen {
                                         {
 
                                             let csv_file = csv_file.clone();
-                                            let respones = responses_file.clone();
+                                            let responses = responses_file.clone();
                                             let tex = tex_template.clone();
                                             let handle = Some(std::thread::spawn(move || {
                                                 super::create::command_create(
                                                     &csv_file,
-                                                    &respones,
+                                                    &responses,
                                                     &tex,
-                                                    &super::config::create::SECTION_DEFAULT.to_string(),
+                                                    super::config::create::SECTION_DEFAULT,
                                                     &super::config::create::FORMAT_DEFAULT,
                                                     &Some(path.clone())
                                                 )
@@ -152,7 +152,7 @@ impl eframe::App for Cloggen {
                                 });
 
                                 // Status bottom
-                                if message.len() > 0 {
+                                if !message.is_empty() {
                                     ui.label(message.as_str());
                                 }
                             });
@@ -226,7 +226,7 @@ impl eframe::App for Cloggen {
                             });
 
                             // Message after operation
-                            if message.len() > 0 {
+                            if !message.is_empty() {
                                 ui.label(message.as_str());
                             }
                         });
@@ -268,7 +268,7 @@ fn file_input(file_var: &mut PathBuf, ui: &mut egui::Ui, heading: &str, extensio
             }
 
             let csv_file = file_var.as_os_str().to_str().unwrap();
-            if csv_file.len() > 0 {
+            if !csv_file.is_empty() {
                 ui[1].label(csv_file);
             }
         });
@@ -308,7 +308,7 @@ impl UiMenu {
         match self {
             NoCommand => "Izberi ukaz",
             NewReport => "Novo mnenje",
-            MergeCsv => "Združi CSV rezultate",
+            MergeCsv => "Združi CSV podatke",
         }
     }
 
@@ -329,16 +329,11 @@ impl UiMenu {
     }
 }
 
-impl Into<&str> for UiMenu {
-    fn into(self) -> &'static str {
-        self.as_str()
-    }
-}
 
 /// The state of the UI when in the NewReport
 /// command menu.
 enum NewReportState {
-    /// User is inputing information
+    /// User is inputting information
     UserInput,
     /// The LaTeX code is compiling or the compiler
     /// is downloading packages.

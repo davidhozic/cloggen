@@ -19,5 +19,5 @@ pub mod merge {
     /// e.g., section about the subject, section about the teacher, etc.
     pub const SECTION_DEFAULT: &str = super::create::SECTION_DEFAULT;
     /// The default output file of the merged CSV data.
-    pub const OUTPUT_DEFAULT: &str = "output.csv";
+    pub const OUTPUT_DEFAULT: &str = "merged.csv";
 }
