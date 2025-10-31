@@ -1,6 +1,12 @@
 # CLOGGEN
 Generator študentskih mnenj (za habilitacijo).
 
+## Kloniranje repozitorija
+Za kloniranje repozitorija je predhodno potrebno namestiti [git-lfs](https://git-lfs.com/).
+
+Ob naloženih zahtevah je mogoče repozitorij klonirati z ukazom `git clone`.
+Nato je potrebno zagnati `git lfs pull`.
+
 ## Namestitev pisave (font)
 Generiran dokument uporablja pisavo *Roboto*. V primeru, da pisava na sistemu ni nameščena, se dokument ne bo generiral.
 Za namestitev uporabi datoteke v mapi ``mnenja-template/fonts/Roboto``. Namesti vse datoteke.
@@ -9,6 +15,8 @@ Za namestitev uporabi datoteke v mapi ``mnenja-template/fonts/Roboto``. Namesti 
 
 Cloggen se zanaša na LaTeX prevajalnik imenovan [Tectonic](https://tectonic-typesetting.github.io/book/latest/index.html).
 Tectonic se zanaša na določene sistemske knjižnice, ki jih je potrebno predhodno namestiti.
+
+Neodvisno od operacijskega sistema je predhodno potrebno nastaviti C++ standard na C++17 (`CXXFLAGS=-std=c++17`).
 
 ### Linux
 Prevajanje na Linuxu je enostavno. Namestiti je potrebno pakete preko upravljalnika paketov:

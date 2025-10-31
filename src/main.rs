@@ -66,8 +66,12 @@
 use clap::{Parser, Subcommand};
 use std::path::PathBuf;
 
+#[cfg(feature = "gui")]
+mod gui;
+
 mod compiler;
 mod preproc;
+mod config;
 mod macros;
 mod create;
 mod merge;
@@ -97,11 +101,11 @@ enum Commands {
         tex_template_filepath: PathBuf,
 
         /// Name of the grades section to use (e.g., "Anketa o izvajalcu")
-        #[clap(short, long, default_value = "Anketa o izvajalcu")]
+        #[clap(short, long, default_value = config::create::SECTION_DEFAULT)]
         section: String,
 
         /// The format of output file.
-        #[clap(short, long, default_value = "pdf")]
+        #[clap(short, long, default_value = config::create::FORMAT_DEFAULT_STR)]
         format: create::OutputFormat,
 
         /// Path of the output file.
@@ -124,44 +128,53 @@ enum Commands {
         csv_file_patterns: Vec<PathBuf>,
 
         /// Name of the grades section to use (e.g., "Anketa o izvajalcu")
-        #[clap(short, long, default_value = "Anketa o izvajalcu")]
+        #[clap(short, long, default_value = config::merge::SECTION_DEFAULT)]
         section: String,
 
         /// Path of the output (merged) file.
-        #[clap(short, long, default_value = "./merged.csv")]
+        #[clap(short, long, default_value = config::merge::OUTPUT_DEFAULT)]
         output: PathBuf
     }
 }
 
 
 fn main() {
-    let cli = Args::parse();
+    match Args::try_parse() {  // Terminal mode
+        Ok(cli) => {
+            match &cli.command {
+                Commands::Create {
+                    studis_csv_filepath,
+                    response_json_filepath,
+                    tex_template_filepath,
+                    section,
+                    format,
+                    output_filepath,
+                } => {
+                    create::command_create(
+                        studis_csv_filepath,
+                        response_json_filepath,
+                        tex_template_filepath,
+                        section,
+                        format,
+                        output_filepath
+                    ).unwrap();
+                }
 
-    match &cli.command {
-        Commands::Create {
-            studis_csv_filepath,
-            response_json_filepath,
-            tex_template_filepath,
-            section,
-            format,
-            output_filepath,
-        } => {
-            create::command_create(
-                studis_csv_filepath,
-                response_json_filepath,
-                tex_template_filepath,
-                section,
-                format,
-                output_filepath
-            );
+                Commands::Compile { tex_file } => {
+                    compiler::cmd_compile(tex_file).unwrap();
+                }
+
+                Commands::Merge { csv_file_patterns , section, output}  => {
+                    merge::command_merge(csv_file_patterns, section, output).unwrap();
+                }
+            }
         }
-
-        Commands::Compile { tex_file } => {
-            compiler::cmd_compile(tex_file);
+        #[cfg(feature = "gui")]
+        Err(_) if std::env::args().len() == 1 => {  // Only the exe is in args => GUI mode
+            gui::main_gui();
         }
-
-        Commands::Merge { csv_file_patterns , section, output}  => {
-            merge::command_merge(csv_file_patterns, section, output);
+        Err(e) => {
+            println!("{e}");
         }
     }
 }

@@ -15,3 +15,4 @@ Cargo.lock
 
 # Compiled latex code
 *.pdf
+.vscode/settings.json
