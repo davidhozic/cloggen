@@ -1,6 +1,12 @@
 # CLOGGEN
 Generator študentskih mnenj (za habilitacijo).
 
+## Kloniranje repozitorija
+Za kloniranje repozitorija je predhodno potrebno namestiti [git-lfs](https://git-lfs.com/).
+
+Ob naloženih zahtevah je mogoče repozitorij klonirati z ukazom `git clone`.
+Nato je potrebno zagnati `git lfs pull`.
+
 ## Namestitev pisave (font)
 Generiran dokument uporablja pisavo *Roboto*. V primeru, da pisava na sistemu ni nameščena, se dokument ne bo generiral.
 Za namestitev uporabi datoteke v mapi ``mnenja-template/fonts/Roboto``. Namesti vse datoteke.
