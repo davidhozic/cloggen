@@ -6,6 +6,9 @@ use std::time::Instant;
 use std::path::PathBuf;
 use std::ops::BitAnd;
 
+/// How many milliseconds to wait before showing a cancellation button.
+const CANCEL_OP_SHOW_WAIT_MS: u128 = 5000;
+
 
 pub fn main_gui() {
     // Setup GUI
@@ -18,7 +21,12 @@ pub fn main_gui() {
     eframe::run_native(
         "Cloggen",
         options,
-        Box::new(|_| Ok(Box::<Cloggen>::default()))
+        Box::new(
+            |creation_ctx| {
+                egui_extras::install_image_loaders(&creation_ctx.egui_ctx);
+                Ok(Box::<Cloggen>::default())
+            }
+        )
     ).unwrap();
 }
 
@@ -30,7 +38,6 @@ struct Cloggen {
 
 impl eframe::App for Cloggen {
     fn update(&mut self, ctx: &egui::Context, _: &mut eframe::Frame) {
-        
         egui::CentralPanel::default().show(ctx, |ui| {
             // Toolbox
             let menu_current = self.menu.clone();
@@ -64,6 +71,12 @@ impl eframe::App for Cloggen {
                                 ui.label("Prenašanje LaTeX paketov in prevajanje");
                                 ui.add(egui::ProgressBar::new(start_time.elapsed().as_secs_f32() % 1.0)
                                     .animate(true));
+                                if start_time.elapsed().as_millis() > CANCEL_OP_SHOW_WAIT_MS {
+                                    ui.add(
+                                        egui::Image::new("https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHNmZnkyM3N0bm8ydDdwbHB3MXlyY3FwYjNtaDhuMjR2eDRlcW14NiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/QBd2kLB5qDmysEXre9/giphy.gif")
+                                        .fit_to_original_size(1.0)
+                                    );
+                                }
                             });
                             if let Some(handle) = maybe_handle && handle.is_finished() {
                                 match maybe_handle.take().unwrap().join() {
