@@ -8,8 +8,10 @@ use std::ops::BitAnd;
 
 /// How many milliseconds to wait before showing a cancellation button.
 const CANCEL_OP_SHOW_WAIT_MS: u128 = 5000;
+/// The logo to show in the window.
 const LOGO_PNG_DATA: &[u8] = include_bytes!("blob/ssfe.png");
-
+/// Limit the number of files that can be merged to 32 since we track selection with 32 bits.
+const MAX_MERGE_FILES: usize = 32;
 
 pub fn main_gui() {
     // Setup GUI
@@ -169,7 +171,13 @@ impl eframe::App for Cloggen {
                             ui.horizontal_wrapped(|ui| {
                                 if ui.button("Dodaj datoteke").clicked() {
                                     if let Some(files) = rfd::FileDialog::new().add_filter("CSV (več datotek)", &["csv"]).pick_files() {
-                                        csv_files.extend(files);
+                                        if csv_files.len() + files.len() <= MAX_MERGE_FILES {
+                                            csv_files.extend(files);
+                                            *message = "".to_string();
+                                        }
+                                        else {
+                                            *message = format!("Napaka: Dovoljenih je največ {MAX_MERGE_FILES} datotek.");
+                                        }
                                     }
                                 }
                                 if ui.button("Odstrani izbiro").clicked() {
@@ -187,6 +195,11 @@ impl eframe::App for Cloggen {
                                             *selected_files &= !(1 << i);
                                         }
                                     }
+
+                                    if n_deleted > 1 {  // clear selection if multiple files were removed.
+                                        *selected_files = 0;
+                                    }
+
                                     *csv_files = new_files;
                                 }
 

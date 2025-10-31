@@ -194,5 +194,5 @@ pub fn command_create(
         }
     }
 
-    return Ok(output);
+    Ok(output)
 }
