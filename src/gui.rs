@@ -280,7 +280,7 @@ fn file_input(file_var: &mut PathBuf, ui: &mut egui::Ui, heading: &str, extensio
                 }
             }
 
-            let csv_file = file_var.as_os_str().to_str().unwrap();
+            let csv_file = file_var.as_os_str().to_string_lossy();
             if !csv_file.is_empty() {
                 ui[1].label(csv_file);
             }

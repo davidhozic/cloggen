@@ -126,7 +126,7 @@ pub fn command_create(
                     "value of Category->Grade->Value must be an array of strings. Found {v:?}"
                 ))?;
 
-                if responses.len() == 0 {
+                if responses.is_empty() {
                     return Err(anyhow!("there are no defined responses for grade {sgrade}, category {cat:?}"));
                 }
 
