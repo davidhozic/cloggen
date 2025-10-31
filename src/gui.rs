@@ -1,5 +1,5 @@
 //! Module defining Cloggen's Graphical User Interface.
-use egui::{Color32, FontId, Frame, Id, PopupAnchor, RichText, Stroke, ViewportBuilder};
+use egui::{Color32, FontId, Frame, IconData, Id, PopupAnchor, RichText, Stroke, ViewportBuilder};
 use eframe::{egui};
 
 use std::time::Instant;
@@ -8,16 +8,23 @@ use std::ops::BitAnd;
 
 /// How many milliseconds to wait before showing a cancellation button.
 const CANCEL_OP_SHOW_WAIT_MS: u128 = 5000;
+const LOGO_PNG_DATA: &[u8] = include_bytes!("blob/ssfe.png");
 
 
 pub fn main_gui() {
     // Setup GUI
+    let image = image::load_from_memory(LOGO_PNG_DATA).expect("failed to load logo");
     let options = eframe::NativeOptions {
-        viewport: ViewportBuilder::default().with_drag_and_drop(false),
+        viewport: ViewportBuilder::default().with_drag_and_drop(false).with_icon(IconData {
+            rgba: image.as_bytes().to_vec(),
+            width: image.width(),
+            height: image.height()
+        }),
         vsync: true,
         ..Default::default()
     };
 
+    drop(image);
     eframe::run_native(
         "Cloggen",
         options,
