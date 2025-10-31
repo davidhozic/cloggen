@@ -209,7 +209,7 @@ impl eframe::App for Cloggen {
                                         if let Some(file) = rfd::FileDialog::new().add_filter("CSV", &["csv"]).save_file() {
                                             match super::merge::command_merge(
                                                 &csv_files,
-                                                &super::config::merge::SECTION_DEFAULT,
+                                                super::config::merge::SECTION_DEFAULT,
                                                 &file
                                             ) {
                                                 Ok(()) => *message = format!("Datoteka je shranjena: {}", file.display()),

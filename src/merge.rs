@@ -40,8 +40,6 @@ fn csv_parse_question_means(file: &PathBuf, section: &str) -> Result<HashMap<Str
 
 /// Command processing function for the ``merge`` command.
 pub fn command_merge(file_patterns: &Vec<PathBuf>, section: &str, output: &PathBuf) -> Result<()> {
-    /// Minimum number of files each pattern in `file_patterns` should match.
-    /// If any matches less, a panic occurs.
     const MIN_FILES_TO_MATCH: usize = 2;
 
     let mut qvalues: HashMap<String, Vec<f64>> = HashMap::new();  // Question values
